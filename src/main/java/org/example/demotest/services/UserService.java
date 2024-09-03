@@ -27,12 +27,19 @@ public class UserService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public User createUser(ServiceRequest serviceRequest) {
-        return userRepository.save(User.builder()
-                .first_name(serviceRequest.getFirst_name())
-                .second_name(serviceRequest.getSecond_name())
-                .last_name(serviceRequest.getLast_name())
-                .role(serviceRequest.getRole())
-                .user_description(serviceRequest.getUser_description())
-                .user_password(serviceRequest.getUser_password())
-                .build());
-    }}
+        try {
+            return userRepository.save(User.builder()
+                    .employee_id(serviceRequest.getEmployee_id())
+                    .first_name(serviceRequest.getFirst_name())
+                    .second_name(serviceRequest.getSecond_name())
+                    .last_name(serviceRequest.getLast_name())
+                    .role(serviceRequest.getRole())
+                    .user_description(serviceRequest.getUser_description())
+                    .user_password(serviceRequest.getUser_password())
+                    .build());
+        } catch (Exception e) {
+            // Логирование ошибки или выброс кастомного исключения
+            throw new RuntimeException("Ошибка при создании пользователя", e);
+        }
+    }
+}

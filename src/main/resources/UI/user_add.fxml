@@ -15,9 +15,11 @@
                         <!-- Filters -->
                         <HBox spacing="10.0" alignment="CENTER_LEFT">
                             <children>
+                                <TextField fx:id="idFilter" promptText="Filter by id" />
                                 <TextField fx:id="surnameFilter" promptText="Filter by Surname" />
                                 <TextField fx:id="nameFilter" promptText="Filter by Name" />
                                 <TextField fx:id="patronymicFilter" promptText="Filter by Patronymic" />
+                                <TextField fx:id="employeeIdFilter" promptText="Filter by employee_id" />
                                 <ComboBox fx:id="roleFilter">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -33,18 +35,21 @@
 
                         <GridPane>
                             <children>
-                                <Label text="Фамилия:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                <Label text="Имя:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <Label text="Отчество:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                <Label text="Описание:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                <Label text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                <Label text="Права:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                                <TextField fx:id="firstName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <TextField fx:id="secondName" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                <TextField fx:id="lastName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <TextField fx:id="userDescription" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                <PasswordField fx:id="userPassword" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                <ComboBox fx:id="roleComboBox" GridPane.columnIndex="1" GridPane.rowIndex="5" >
+                                <Label text="Фамилия:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label text="Имя:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <Label text="Отчество:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <Label text="Описание:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                <Label text="Рабочий ID:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                                <Label text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                                <Label text="Права:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+<!--                                <TextField fx:id="ID" GridPane.columnIndex="1" GridPane.rowIndex="0" />-->
+                                <TextField fx:id="secondName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <TextField fx:id="firstName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <TextField fx:id="lastName" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <TextField fx:id="userDescription" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                <TextField fx:id="employeeId" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                <PasswordField fx:id="userPassword" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                <ComboBox fx:id="roleComboBox" GridPane.columnIndex="1" GridPane.rowIndex="7" >
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
                                             <String fx:value="USER" />
@@ -62,8 +67,11 @@
                                 <ColumnConstraints hgrow="ALWAYS" maxWidth="388.0" minWidth="100.0" prefWidth="349.0" />
                                 <ColumnConstraints hgrow="ALWAYS" maxWidth="468.0" minWidth="100.0" prefWidth="429.0" />
                                 <ColumnConstraints hgrow="ALWAYS" maxWidth="548.0" minWidth="100.0" prefWidth="509.0" />
+                                <ColumnConstraints hgrow="ALWAYS" maxWidth="628.0" minWidth="100.0" prefWidth="589.0" />
+<!--                                <ColumnConstraints hgrow="ALWAYS" maxWidth="708.0" minWidth="100.0" prefWidth="669.0" />&ndash;&gt;-->
                             </columnConstraints>
                             <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
@@ -79,11 +87,13 @@
                         </StackPane>
                         <TableView fx:id="userTable">
                             <columns>
-                                <TableColumn text="Имя" fx:id="first_name" />
+                                <TableColumn text="ID" fx:id="id" />
                                 <TableColumn text="Фамилия" fx:id="second_name" />
+                                <TableColumn text="Имя" fx:id="first_name" />
                                 <TableColumn text="Отчество" fx:id="last_name" />
                                 <TableColumn text="Права" fx:id="role" />
                                 <TableColumn text="Описание" fx:id="user_description" />
+                                <TableColumn text="Рабочий ID" fx:id="employee_id" />
                                 <TableColumn text="Пароль" fx:id="user_password" />
                             </columns>
                         </TableView>

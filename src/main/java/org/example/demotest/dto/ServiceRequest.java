@@ -23,5 +23,6 @@ public class ServiceRequest implements Serializable {
     private String last_name;
     private Role role;
     private String user_description;
+    private Long employee_id;
     private String user_password;
 }
