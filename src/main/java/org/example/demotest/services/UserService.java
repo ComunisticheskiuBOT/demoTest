@@ -29,17 +29,30 @@ public class UserService {
     public User createUser(ServiceRequest serviceRequest) {
         try {
             return userRepository.save(User.builder()
-                    .employee_id(serviceRequest.getEmployee_id())
+                    .employeeId(serviceRequest.getEmployee_id())
                     .first_name(serviceRequest.getFirst_name())
                     .second_name(serviceRequest.getSecond_name())
                     .last_name(serviceRequest.getLast_name())
                     .role(serviceRequest.getRole())
                     .user_description(serviceRequest.getUser_description())
-                    .user_password(serviceRequest.getUser_password())
+                    .userPassword(serviceRequest.getUser_password())
                     .build());
         } catch (Exception e) {
-            // Логирование ошибки или выброс кастомного исключения
             throw new RuntimeException("Ошибка при создании пользователя", e);
         }
+    }
+
+    @Transactional
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteUserByEmployeeId(Long employee_id) {
+        userRepository.deleteByEmployeeId(employee_id);
+    }
+
+    public boolean validateUser(Long employee_id, String user_password) {
+        return userRepository.findByEmployeeIdAndUserPassword(employee_id, user_password) != null;
     }
 }

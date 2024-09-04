@@ -1,20 +1,13 @@
 package org.example.demotest;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.example.demotest.app_controllers.LoginManager;
-import org.example.demotest.app_controllers.MainViewManager;
+import org.example.demotest.managers.LoginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import java.io.IOException;
 
 
 @SpringBootApplication
@@ -38,15 +31,9 @@ public class DemoTestApplication extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Scene scene = new Scene(new StackPane());
-
-		LoginManager loginManager = new LoginManager(scene);
+		stage.setTitle("Авторизация");
+		LoginManager loginManager = new LoginManager(stage);
 		loginManager.showLoginScreen();
-
-		stage.setScene(scene);
-		stage.setHeight(800);
-		stage.setWidth(600);
-		stage.show();
 	}
 
 	@Override

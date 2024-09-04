@@ -3,6 +3,8 @@ package org.example.demotest.app_controllers;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import org.example.demotest.managers.LoginManager;
+import org.example.demotest.managers.MainViewManager;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -4,15 +4,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import org.example.demotest.entities.Role;
 import org.example.demotest.entities.User;
+import org.example.demotest.managers.LoginManager;
+import org.example.demotest.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.*;
 import java.util.Arrays;
+
+import static org.example.demotest.app_controllers.LoginController.sessionID;
 
 @Component
 public class UserAppController {
@@ -49,7 +56,6 @@ public class UserAppController {
     @FXML private TableColumn<User, String> user_password;
 
     //Поля для создания пользователя
-    @FXML private TextField ID;
     @FXML private TextField secondName;
     @FXML private TextField firstName;
     @FXML private TextField lastName;
@@ -57,6 +63,11 @@ public class UserAppController {
     @FXML private TextField userDescription;
     @FXML private TextField employeeId;
     @FXML private PasswordField userPassword;
+
+    //Поля для удаления пользователя
+    @FXML private TextField deleteIdField;
+    @FXML private TextField deleteEmployeeIdField;
+    @FXML private Button deleteUserButton;
 
     //Фильтры
     @FXML private TextField idFilter;
@@ -66,7 +77,9 @@ public class UserAppController {
     @FXML private TextField patronymicFilter;
     @FXML private ComboBox<String> roleFilter;
     ObservableList<User> observableUserList = FXCollections.observableArrayList();
-    @FXML private Button backButton;
+
+    @Autowired
+    private UserService userService;
 
     public void initialize() {
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -75,8 +88,8 @@ public class UserAppController {
         last_name.setCellValueFactory(new PropertyValueFactory<>("last_name"));
         role.setCellValueFactory(new PropertyValueFactory<>("role"));
         user_description.setCellValueFactory(new PropertyValueFactory<>("user_description"));
-        employee_id.setCellValueFactory(new PropertyValueFactory<>("employee_id"));
-        user_password.setCellValueFactory(new PropertyValueFactory<>("user_password"));
+        employee_id.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+        user_password.setCellValueFactory(new PropertyValueFactory<>("userPassword"));
         roleComboBox.getItems().setAll(Role.values());
 
         employeeId.setTextFormatter(createNumericFilter());
@@ -106,13 +119,13 @@ public class UserAppController {
     @FXML
     private void handleAddUser(ActionEvent event) {
         User newUser = User.builder()
-                .employee_id(Long.parseLong(employeeId.getText()))
+                .employeeId(Long.parseLong(employeeId.getText()))
                 .first_name(firstName.getText())
                 .second_name(secondName.getText())
                 .last_name(lastName.getText())
                 .role(roleComboBox.getValue())
                 .user_description(userDescription.getText())
-                .user_password(userPassword.getText())
+                .userPassword(userPassword.getText())
                 .build();
 
         try {
@@ -151,7 +164,7 @@ public class UserAppController {
 
         userTable.setItems(observableUserList.filtered(user -> {
             boolean matchesId = id.isEmpty() || String.valueOf(user.getId()).contains(id);
-            boolean matchesEmployeeId = employeeId.isEmpty() || String.valueOf(user.getEmployee_id()).contains(employeeId);
+            boolean matchesEmployeeId = employeeId.isEmpty() || String.valueOf(user.getEmployeeId()).contains(employeeId);
             boolean matchesSurname = user.getSecond_name().toLowerCase().contains(surname);
             boolean matchesName = user.getFirst_name().toLowerCase().contains(name);
             boolean matchesPatronymic = user.getLast_name().toLowerCase().contains(patronymic);
@@ -160,9 +173,28 @@ public class UserAppController {
             return matchesId && matchesEmployeeId && matchesSurname && matchesName && matchesPatronymic && matchesRole;
         }));
     }
+
     @FXML
-    private void handleBackButton(ActionEvent event) {
-        // Handle the back button action
-        // Assuming you have a method to go back to the previous screen
+    private void handleDeleteUser() {
+        String idText = deleteIdField.getText();
+        String employeeIdText = deleteEmployeeIdField.getText();
+
+        if (idText != null && !idText.isEmpty()) {
+            Long id = Long.parseLong(idText);
+            userService.deleteUserById(id);
+        } else if (employeeIdText != null && !employeeIdText.isEmpty()) {
+            Long employeeId = Long.parseLong(employeeIdText);
+            userService.deleteUserByEmployeeId(employeeId);
+        } else {
+            // Обработка ситуации, если оба поля пусты
+            System.out.println("Введите ID или Рабочий ID для удаления пользователя");
+        }
+    }
+
+    @FXML
+    public void handleBackButton(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        LoginManager loginManager = new LoginManager(stage);
+        loginManager.showMainView(String.valueOf(sessionID));
     }
 }

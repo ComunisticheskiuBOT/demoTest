@@ -15,11 +15,11 @@
                         <!-- Filters -->
                         <HBox spacing="10.0" alignment="CENTER_LEFT">
                             <children>
-                                <TextField fx:id="idFilter" promptText="Filter by id" />
-                                <TextField fx:id="surnameFilter" promptText="Filter by Surname" />
-                                <TextField fx:id="nameFilter" promptText="Filter by Name" />
-                                <TextField fx:id="patronymicFilter" promptText="Filter by Patronymic" />
-                                <TextField fx:id="employeeIdFilter" promptText="Filter by employee_id" />
+                                <TextField fx:id="idFilter" promptText="Фильтр по ID" />
+                                <TextField fx:id="surnameFilter" promptText="Фильтр по Фамилии" />
+                                <TextField fx:id="nameFilter" promptText="Фильтр по Имени" />
+                                <TextField fx:id="patronymicFilter" promptText="Фильтр по Отчеству" />
+                                <TextField fx:id="employeeIdFilter" promptText="Фильтр по Раб. ID" />
                                 <ComboBox fx:id="roleFilter">
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -42,13 +42,12 @@
                                 <Label text="Рабочий ID:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
                                 <Label text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
                                 <Label text="Права:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-<!--                                <TextField fx:id="ID" GridPane.columnIndex="1" GridPane.rowIndex="0" />-->
                                 <TextField fx:id="secondName" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                 <TextField fx:id="firstName" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                 <TextField fx:id="lastName" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                 <TextField fx:id="userDescription" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                 <TextField fx:id="employeeId" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                <PasswordField fx:id="userPassword" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                <PasswordField fx:id="userPassword" promptText="Не более 64 сим." GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                 <ComboBox fx:id="roleComboBox" GridPane.columnIndex="1" GridPane.rowIndex="7" >
                                     <items>
                                         <FXCollections fx:factory="observableArrayList">
@@ -68,7 +67,6 @@
                                 <ColumnConstraints hgrow="ALWAYS" maxWidth="468.0" minWidth="100.0" prefWidth="429.0" />
                                 <ColumnConstraints hgrow="ALWAYS" maxWidth="548.0" minWidth="100.0" prefWidth="509.0" />
                                 <ColumnConstraints hgrow="ALWAYS" maxWidth="628.0" minWidth="100.0" prefWidth="589.0" />
-<!--                                <ColumnConstraints hgrow="ALWAYS" maxWidth="708.0" minWidth="100.0" prefWidth="669.0" />&ndash;&gt;-->
                             </columnConstraints>
                             <rowConstraints>
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
@@ -80,11 +78,19 @@
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
                             </rowConstraints>
                         </GridPane>
-                        <StackPane prefHeight="-1.0" prefWidth="-1.0">
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
                             <children>
-                                <Button fx:id="addUserButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Добавить пользователя" StackPane.alignment="CENTER_RIGHT" onAction="#handleAddUser" />
+                                <Button fx:id="addUserButton" mnemonicParsing="false" text="Добавить пользователя" onAction="#handleAddUser" />
+                                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад" onAction="#handleBackButton" />
                             </children>
-                        </StackPane>
+                        </HBox>
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <children>
+                                <TextField fx:id="deleteIdField" promptText="ID для удаления" />
+                                <TextField fx:id="deleteEmployeeIdField" promptText="Рабочий ID для удаления" />
+                                <Button fx:id="deleteUserButton" mnemonicParsing="false" text="Удалить пользователя" onAction="#handleDeleteUser" />
+                            </children>
+                        </HBox>
                         <TableView fx:id="userTable">
                             <columns>
                                 <TableColumn text="ID" fx:id="id" />

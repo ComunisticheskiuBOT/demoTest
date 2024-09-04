@@ -14,4 +14,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.role <> :role ORDER BY u.first_name ASC")
     List<User> findAllUsersNotFromCountry(Role role);
     Optional<User> findUserById(Long id);
+    User findByEmployeeIdAndUserPassword(Long employee_id, String user_password);
+
+    void deleteById(Long id);
+
+    void deleteByEmployeeId(Long employee_id);
 }

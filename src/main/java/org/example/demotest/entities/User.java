@@ -18,7 +18,7 @@ public class User {
     @Column(name = "id")
     private Long id;
     @Column(name = "employee_id")
-    private Long employee_id;
+    private Long employeeId;
     @Column(name = "first_name")
     private String first_name;
     @Column(name = "second_name")
@@ -31,6 +31,6 @@ public class User {
     @Column(name = "user_description")
     private String user_description;
     @Column(name = "user_password")
-    private String user_password;
+    private String userPassword;
 
 }
