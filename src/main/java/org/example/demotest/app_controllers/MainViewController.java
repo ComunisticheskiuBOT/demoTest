@@ -18,6 +18,7 @@ public class MainViewController {
     @FXML private Button projectsButton;
     @FXML private Button productsButton;
     @FXML private Button qualitiesButton;
+    @FXML private Button storagesButton;
     @FXML private Label  sessionLabel;
 
     private MainViewManager mainViewManager;
@@ -85,6 +86,14 @@ public class MainViewController {
         productsButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
                 mainViewManager.products();
+            }
+        });
+    }
+
+    public void initStoragesWindow(final MainViewManager mainViewManager) {
+        storagesButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) {
+                mainViewManager.storages();
             }
         });
     }

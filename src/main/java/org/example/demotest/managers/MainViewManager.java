@@ -35,6 +35,7 @@ public class MainViewManager {
     public  void projects() { showProjectWindow(); }
     public  void products() { showProductWindow(); }
     public  void qualities() { showQualityWindow(); }
+    public void storages() { showStorageWindow(); }
 
     private void showEmployeeWindow() {
 
@@ -157,6 +158,27 @@ public class MainViewManager {
             stage.setScene(scene);
             stage.show();
             ProductAppController controller = loader.getController();
+            loader.setControllerFactory(applicationContext::getBean);
+            controller.initialize();
+        } catch (IOException ex) {
+            Logger.getLogger(MainViewManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void showStorageWindow() {
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/UI/storage_add.fxml")
+            );
+            loader.setControllerFactory(applicationContext::getBean);
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root, 800, 600);
+            stage.setTitle("Панель управления складом");
+            stage.setScene(scene);
+            stage.show();
+            StorageAppController controller = loader.getController();
             loader.setControllerFactory(applicationContext::getBean);
             controller.initialize();
         } catch (IOException ex) {

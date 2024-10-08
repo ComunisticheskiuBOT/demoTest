@@ -224,8 +224,8 @@ public class QualityAppController {
         qualityTable.setItems(observableQualitiesList.filtered(quality -> {
             boolean matchesId = id.isEmpty() || String.valueOf(quality.getQualityId()).contains(id);
             boolean matchesInspectorId = inspectorId.isEmpty() || String.valueOf(quality.getInspectorId()).contains(inspectorId);
-            boolean matchesProductId = productId.isEmpty() || String.valueOf(quality.getInspectorId()).contains(productId);
-            boolean matchesResultTypeFilterValue = resultTypeFilterValue == null || "All".equals(resultTypeFilterValue) || quality.getResult().name().equalsIgnoreCase(resultTypeFilterValue);
+            boolean matchesProductId = productId.isEmpty() || String.valueOf(quality.getProductId()).contains(productId);
+            boolean matchesResultTypeFilterValue = resultTypeFilterValue == null || "ALL".equals(resultTypeFilterValue) || quality.getResult().name().equalsIgnoreCase(resultTypeFilterValue);
 
             // Возвращаем результат проверки всех фильтров
             return matchesId && matchesProductId && matchesInspectorId && matchesResultTypeFilterValue;
@@ -243,7 +243,7 @@ public class QualityAppController {
             // Найдем пользователя по Id
             Quality quality = qualityService.findQualityById(idText);
             if (quality != null) {
-                qualityService.deleteQuality(quality.getProductId());
+                qualityService.deleteQuality(quality.getQualityId());
                 loadQualities();
             } else {
                 System.out.println("Проверка качества с указанным ID не найден");

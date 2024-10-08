@@ -31,7 +31,7 @@ public class ServiceRequestEmployee implements Serializable {
     private String password;
     private Date hireDate;
     private Date terminationDate;
-    private Long departmentId;
+    private Department department;
     private String position;
     private Status status;
     private Integer salary;

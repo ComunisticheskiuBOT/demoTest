@@ -42,10 +42,8 @@ public class Employee {
     private Date terminationDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "department_id", referencedColumnName = "department_id", insertable=false, updatable=false)
+    @JoinColumn(name = "department_id", referencedColumnName = "department_id")
     private Department department;
-    @Column(name = "department_id")
-    private Long departmentId;
 
     @Column(name = "position")
     private String position;

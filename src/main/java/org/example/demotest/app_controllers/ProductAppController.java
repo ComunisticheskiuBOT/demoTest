@@ -206,10 +206,10 @@ public class ProductAppController {
         String productName = productNameFilter.getText().toLowerCase();
         String productTypeFilterValue = productTypeFilter.getValue();
 
-        productTable.setItems(observableProductsList.filtered(project -> {
-            boolean matchesId = id.isEmpty() || String.valueOf(project.getProjectId()).contains(id);
-            boolean matchesProductName = productName.isEmpty() || project.getProductName().toLowerCase().contains(productName);
-            boolean matchesProductTypeFilterValue = productTypeFilterValue == null || "All".equals(productTypeFilterValue) || project.getProductType().name().equalsIgnoreCase(productTypeFilterValue);
+        productTable.setItems(observableProductsList.filtered(product -> {
+            boolean matchesId = id.isEmpty() || String.valueOf(product.getProductId()).contains(id);
+            boolean matchesProductName = productName.isEmpty() || product.getProductName().toLowerCase().contains(productName);
+            boolean matchesProductTypeFilterValue = productTypeFilterValue == null || "ALL".equals(productTypeFilterValue) || product.getProductType().name().equalsIgnoreCase(productTypeFilterValue);
 
             // Возвращаем результат проверки всех фильтров
             return matchesId && matchesProductName && matchesProductTypeFilterValue;

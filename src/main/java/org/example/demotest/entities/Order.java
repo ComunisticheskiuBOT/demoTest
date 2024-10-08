@@ -23,14 +23,10 @@ public class Order {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable=false, updatable=false)
     private Client client;
-    @Column(name = "client_id")
-    private Long clientId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable=false, updatable=false)
     private Project project;
-    @Column(name = "project_id")
-    private Long projectId;
 
     @Column(name = "date_of_order")
     private Date dateOfOrder;

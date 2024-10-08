@@ -1,5 +1,6 @@
 package org.example.demotest.app_controllers;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,10 +11,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestDepartment;
 import org.example.demotest.dto.ServiceRequestOrder;
-import org.example.demotest.entities.Department;
-import org.example.demotest.entities.Order;
-import org.example.demotest.entities.OrderStatus;
-import org.example.demotest.entities.Status;
+import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.DepartmentService;
 import org.example.demotest.services.OrderService;
@@ -70,7 +68,7 @@ public class OrderAppController {
     @FXML private TableView<Order> orderTable;
     @FXML private TableColumn<Order, Long> id;
     @FXML private TableColumn<Order, Long> client_id;
-    @FXML private TableColumn<Order, String> project_id;
+    @FXML private TableColumn<Order, Long> project_id;
     @FXML private TableColumn<Order, Date> order_date;
     @FXML private TableColumn<Order, Date> completion_date;
     @FXML private TableColumn<Order, OrderStatus> order_status;
@@ -97,11 +95,20 @@ public class OrderAppController {
 
 
     public void initialize() {
-        id.setCellValueFactory(new PropertyValueFactory<>("Id"));
-        client_id.setCellValueFactory(new PropertyValueFactory<>("clientId"));
-        project_id.setCellValueFactory(new PropertyValueFactory<>("projectId"));
-        order_date.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
-        completion_date.setCellValueFactory(new PropertyValueFactory<>("completionDate"));
+        id.setCellValueFactory(new PropertyValueFactory<>("orderId"));
+
+        client_id.setCellValueFactory(cellData -> {
+            Client client = cellData.getValue().getClient();
+            return new SimpleObjectProperty<>(client != null ? client.getClientId() : null);
+        });
+
+        project_id.setCellValueFactory(cellData -> {
+            Project project = cellData.getValue().getProject();
+            return new SimpleObjectProperty<>(project != null ? project.getProjectId() : null);
+        });
+
+        order_date.setCellValueFactory(new PropertyValueFactory<>("dateOfOrder"));
+        completion_date.setCellValueFactory(new PropertyValueFactory<>("dateOfExecution"));
         order_status.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
         order_description.setCellValueFactory(new PropertyValueFactory<>("orderDescription"));
         statusComboBoxField.getItems().setAll(org.example.demotest.entities.OrderStatus.values());
@@ -148,9 +155,19 @@ public class OrderAppController {
     @FXML
     private void handleAddOrder(ActionEvent event) {
         try {
-            Long clientID= Long.valueOf(clientIdField.getText());
-            if (!orderService.clientExists(clientID)) { // Проверка существования
+            Long clientIdValue = Long.valueOf(clientIdField.getText());
+            Client client = orderService.getClientById(clientIdValue);
+
+            if (client == null) {
                 System.out.println("Клиент с указанным ID не найден.");
+                return;
+            }
+
+            Long projectIdValue = Long.valueOf(projectIdField.getText());
+            Project project = orderService.getProjectById(projectIdValue);
+
+            if (project == null) {
+                System.out.println("Проект с указанным ID не найден.");
                 return;
             }
 
@@ -158,14 +175,13 @@ public class OrderAppController {
             Date parsedDateOfOrder = sdf.parse(dateOfOrderField.getText());
             Date parsedDateExecution = sdf.parse(dateOfExecutionField.getText());
             ServiceRequestOrder newOrder = ServiceRequestOrder.builder()
-                    .clientId(Long.valueOf(clientIdField.getText()))
-                    .projectId(Long.valueOf(projectIdField.getText()))
+                    .client(client)
+                    .project(project)
                     .dateOfOrder(parsedDateOfOrder)
                     .dateOfExecution(parsedDateExecution)
                     .orderStatus(statusComboBoxField.getValue())
                     .orderDescription(orderDescription.getText())
                     .build();
-            System.out.println("Заказ добавлен: " + newOrder);
             Order orderCreated = restTemplate.postForObject(url, newOrder, Order.class);
             if (orderCreated != null) {
                 observableOrderList.add(orderCreated); // Используйте observableUserList
@@ -191,12 +207,12 @@ public class OrderAppController {
 
     private void applyFilters() {
         String id = idFilter.getText();
-        String clientID = clientFilter.getText().toLowerCase();
-        String projectID = projectFilter.getText().toLowerCase();
+        String clientID = clientFilter.getText();
+        String projectID = projectFilter.getText();
 
         orderTable.setItems(observableOrderList.filtered(order -> {
             boolean matchesId = id.isEmpty() || String.valueOf(order.getOrderId()).contains(id);
-            boolean matchesClientID = String.valueOf(order.getOrderId()).contains(clientID);
+            boolean matchesClientID = clientID.isEmpty() || String.valueOf(order.getOrderId()).contains(clientID);
             boolean matchesProjectID = String.valueOf(order.getOrderId()).contains(projectID);
 
             return matchesId && matchesClientID && matchesProjectID;

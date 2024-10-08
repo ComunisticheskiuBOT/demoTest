@@ -192,7 +192,7 @@ public class ClientAppController {
             boolean matchesId = id.isEmpty() || String.valueOf(client.getClientId()).contains(id);
             boolean matchesCompanyName = client.getCompanyName().toLowerCase().contains(companyName);
             boolean matchesContactPerson = client.getContactPerson().toLowerCase().contains(contactPerson);
-            boolean matchesReputation = "All".equals(reputationFilterValue) || client.getReputation().name().equalsIgnoreCase(reputationFilterValue);
+            boolean matchesReputation = "ALL".equals(reputationFilterValue) || client.getReputation().name().equalsIgnoreCase(reputationFilterValue);
 
             return matchesId && matchesCompanyName && matchesContactPerson && matchesReputation;
         }));

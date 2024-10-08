@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.demotest.dto.ServiceRequestEmployee;
 import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Employee;
+import org.example.demotest.entities.Project;
 import org.example.demotest.repository.DepartmentRepository;
 import org.example.demotest.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,8 @@ public class EmployeeService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Employee createEmployee(ServiceRequestEmployee serviceRequestEmployee) {
         try {
-            departmentRepository.findById(serviceRequestEmployee.getDepartmentId())
-                    .orElseThrow(() -> new RuntimeException("Департамент с ID '" + serviceRequestEmployee.getDepartmentId() + "' не найден"));
+            departmentRepository.findById(serviceRequestEmployee.getDepartment().getDepartmentId())
+                    .orElseThrow(() -> new RuntimeException("Департамент с ID '" + serviceRequestEmployee.getDepartment().getDepartmentId() + "' не найден"));
 
             return employeeRepository.save(Employee.builder()
                     .firstName(serviceRequestEmployee.getFirstName())
@@ -42,7 +43,7 @@ public class EmployeeService {
                     .passWord(serviceRequestEmployee.getPassword())
                     .hireDate(serviceRequestEmployee.getHireDate())
                     .terminationDate(serviceRequestEmployee.getTerminationDate())
-                    .departmentId(serviceRequestEmployee.getDepartmentId())
+                    .department(serviceRequestEmployee.getDepartment())
                     .position(serviceRequestEmployee.getPosition())
                     .status(serviceRequestEmployee.getStatus())
                     .salary(serviceRequestEmployee.getSalary())
@@ -73,12 +74,18 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public boolean validateUser(Long passportNumber, String password) {
-        return employeeRepository.findByPassportNumberAndPassWord(passportNumber, password) != null;
-    }
-
     public boolean departmentExists(Long departmentId) {
         return departmentRepository.findById(departmentId).isPresent();
+    }
+
+    @Transactional(readOnly = true)
+    public Department getDepartmentById(Long departmentId) {
+        return departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new RuntimeException("Отдел с ID '" + departmentId + "' не найден"));
+    }
+
+    public boolean validateUser(Long passportNumber, String password) {
+        return employeeRepository.findByPassportNumberAndPassWord(passportNumber, password) != null;
     }
 
     public Optional<Employee> updateEmployee(Long id, ServiceRequestEmployee updatedEmployee) {

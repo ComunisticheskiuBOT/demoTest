@@ -1,5 +1,6 @@
 package org.example.demotest.app_controllers;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -9,7 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestEmployee;
+import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Employee;
+import org.example.demotest.entities.Project;
 import org.example.demotest.entities.Status;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
@@ -173,7 +176,11 @@ public class EmployeeAppController {
         pass_word.setCellValueFactory(new PropertyValueFactory<>("passWord"));
         hire_date.setCellValueFactory(new PropertyValueFactory<>("hireDate"));
         termination_date.setCellValueFactory(new PropertyValueFactory<>("terminationDate"));
-        department_id.setCellValueFactory(new PropertyValueFactory<>("departmentId"));
+        department_id.setCellValueFactory(cellData -> {
+            Department department = cellData.getValue().getDepartment();
+            return new SimpleObjectProperty<>(department != null ? department.getDepartmentId() : null);
+        });
+
         Position.setCellValueFactory(new PropertyValueFactory<>("Position"));
         Status.setCellValueFactory(new PropertyValueFactory<>("Status"));
         Salary.setCellValueFactory(new PropertyValueFactory<>("Salary"));
@@ -240,9 +247,11 @@ public class EmployeeAppController {
     @FXML
     private void handleAddEmployee(ActionEvent event) {
         try {
-            // Проверка на существование ID отдела
-            Long departmentId = Long.valueOf(departmentIdField.getText());
-            if (!employeeService.departmentExists(departmentId)) { // Проверка существования
+            Long departmentIdValue = Long.valueOf(departmentIdField.getText());
+            // Получите объект Project из службы, а не только его ID
+            Department department = employeeService.getDepartmentById(departmentIdValue);
+
+            if (department == null) {
                 System.out.println("Отдел с указанным ID не найден.");
                 return;
             }
@@ -266,7 +275,7 @@ public class EmployeeAppController {
                     .password(passwordField.getText())
                     .hireDate(parsedHireDate)
                     .terminationDate(parsedTerminationDate)
-                    .departmentId(Long.valueOf(departmentIdField.getText()))
+                    .department(department)
                     .position(positionField.getText())
                     .status(statusComboBox.getValue())
                     .salary(Integer.valueOf(salaryField.getText()))
@@ -310,7 +319,7 @@ public class EmployeeAppController {
             boolean matchesSurname = surname.isEmpty() || employee.getSecondName().toLowerCase().contains(surname);
             boolean matchesName = name.isEmpty() || employee.getFirstName().toLowerCase().contains(name);
             boolean matchesPatronymic = patronymic.isEmpty() || employee.getLastName().toLowerCase().contains(patronymic);
-            boolean matchesStatus = statusFilterValue == null || "All".equals(statusFilterValue) || employee.getStatus().name().equalsIgnoreCase(statusFilterValue);
+            boolean matchesStatus = statusFilterValue == null || "ALL".equals(statusFilterValue) || employee.getStatus().name().equalsIgnoreCase(statusFilterValue);
 
             // Фильтр по дате рождения
             boolean matchesBirthDate = birthDateText.isEmpty();

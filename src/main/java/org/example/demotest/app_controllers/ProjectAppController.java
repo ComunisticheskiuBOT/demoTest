@@ -213,7 +213,7 @@ public class ProjectAppController {
             boolean matchesId = id.isEmpty() || String.valueOf(project.getProjectId()).contains(id);
             boolean matchesProjectName = projectName.isEmpty() || project.getProjectName().toLowerCase().contains(projectName);
             boolean matchesDrawing = drawing.isEmpty() || project.getDrawing().toLowerCase().contains(drawing);
-            boolean matchesMaterialTypeFilterValue = materialTypeFilterValue == null || "All".equals(materialTypeFilterValue) || project.getMaterialType().name().equalsIgnoreCase(materialTypeFilterValue);
+            boolean matchesMaterialTypeFilterValue = materialTypeFilterValue == null || "ALL".equals(materialTypeFilterValue) || project.getMaterialType().name().equalsIgnoreCase(materialTypeFilterValue);
 
             // Возвращаем результат проверки всех фильтров
             return matchesId && matchesProjectName && matchesDrawing && matchesMaterialTypeFilterValue;

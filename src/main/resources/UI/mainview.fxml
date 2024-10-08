@@ -17,6 +17,7 @@
                 <Button id="projectsButton" fx:id="projectsButton" text="Проекты" prefWidth="150" prefHeight="40"  />
                 <Button id="productsButton" fx:id="productsButton" text="Продукты" prefWidth="150" prefHeight="40"  />
                 <Button id="qualitiesButton" fx:id="qualitiesButton" text="Качество" prefWidth="150" prefHeight="40" />
+                <Button id="storagesButton" fx:id="storagesButton" text="Склады" prefWidth="150" prefHeight="40" />
             </VBox>
 
             <GridPane>

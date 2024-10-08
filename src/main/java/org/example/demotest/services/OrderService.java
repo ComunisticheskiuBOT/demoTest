@@ -2,9 +2,13 @@ package org.example.demotest.services;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demotest.dto.ServiceRequestOrder;
+import org.example.demotest.entities.Client;
+import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Order;
+import org.example.demotest.entities.Project;
 import org.example.demotest.repository.ClientRepository;
 import org.example.demotest.repository.OrderRepository;
+import org.example.demotest.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,7 @@ import java.util.Optional;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ClientRepository clientRepository;
+    private final ProjectRepository projectRepository;
 
     @Transactional(readOnly = true)
     public List<Order> findAllOrders(){
@@ -26,13 +31,13 @@ public class OrderService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Order createOrder(ServiceRequestOrder serviceRequestOrder) {
         try {
-            clientRepository.findById(serviceRequestOrder.getClientId())
-                    .orElseThrow(() -> new RuntimeException("Департамент с ID '" + serviceRequestOrder.getClientId() + "' не найден"));
+            clientRepository.findById(serviceRequestOrder.getClient().getClientId())
+                    .orElseThrow(() -> new RuntimeException("Департамент с ID '" + serviceRequestOrder.getClient().getClientId() + "' не найден"));
 
             return orderRepository.save(Order.builder()
                     .orderId(serviceRequestOrder.getOrderId())
-                    .clientId(serviceRequestOrder.getClientId())
-                    .projectId(serviceRequestOrder.getProjectId())
+                    .client(serviceRequestOrder.getClient())
+                    .project(serviceRequestOrder.getProject())
                     .dateOfExecution(serviceRequestOrder.getDateOfExecution())
                     .dateOfOrder(serviceRequestOrder.getDateOfOrder())
                     .orderStatus(serviceRequestOrder.getOrderStatus())
@@ -51,9 +56,23 @@ public class OrderService {
         return orderRepository.findOrderByOrderId(id);
     }
 
+    @Transactional(readOnly = true)
+    public Project getProjectById(Long projectId) {
+        return projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Проект с ID '" + projectId + "' не найден"));
+    }
+
+    @Transactional(readOnly = true)
+    public Client getClientById(Long clientId) {
+        return clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Клиент с ID '" + clientId + "' не найден"));
+    }
 
     public boolean clientExists(Long clientId) {
         return clientRepository.findById(clientId).isPresent();
+    }
+    public boolean projectExists(Long projectId) {
+        return projectRepository.findById(projectId).isPresent();
     }
 
     public Optional<Order> updateOrder(Long id, ServiceRequestOrder updatedOrder) {
@@ -61,11 +80,11 @@ public class OrderService {
             if (updatedOrder.getOrderId() != null) {
                 order.setOrderId(updatedOrder.getOrderId());
             }
-            if (updatedOrder.getClientId() != null) {
-                order.setClientId(updatedOrder.getClientId());
+            if (updatedOrder.getClient() != null) {
+                order.setClient(updatedOrder.getClient());
             }
-            if (updatedOrder.getProjectId() != null) {
-                order.setProjectId(updatedOrder.getProjectId());
+            if (updatedOrder.getProject() != null) {
+                order.setProject(updatedOrder.getProject());
             }
             if (updatedOrder.getDateOfOrder() != null) {
                 order.setDateOfOrder(updatedOrder.getDateOfOrder());
