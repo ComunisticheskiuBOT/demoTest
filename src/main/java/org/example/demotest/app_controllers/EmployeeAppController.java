@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestEmployee;
 import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Employee;
-import org.example.demotest.entities.Project;
 import org.example.demotest.entities.Status;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;

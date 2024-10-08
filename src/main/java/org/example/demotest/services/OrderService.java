@@ -3,7 +3,6 @@ package org.example.demotest.services;
 import lombok.RequiredArgsConstructor;
 import org.example.demotest.dto.ServiceRequestOrder;
 import org.example.demotest.entities.Client;
-import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Order;
 import org.example.demotest.entities.Project;
 import org.example.demotest.repository.ClientRepository;

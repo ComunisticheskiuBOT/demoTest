@@ -10,11 +10,9 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import org.example.demotest.dto.ServiceRequestProduct;
 import org.example.demotest.dto.ServiceRequestQuality;
 import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
-import org.example.demotest.services.ProductService;
 import org.example.demotest.services.QualityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,9 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import java.util.Arrays;
 import java.util.Date;

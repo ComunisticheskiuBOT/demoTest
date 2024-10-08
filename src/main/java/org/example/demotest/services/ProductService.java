@@ -2,13 +2,10 @@ package org.example.demotest.services;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demotest.dto.ServiceRequestProduct;
-import org.example.demotest.dto.ServiceRequestProject;
 import org.example.demotest.entities.Product;
 import org.example.demotest.entities.Project;
-import org.example.demotest.repository.EmployeeRepository;
 import org.example.demotest.repository.ProductRepository;
 import org.example.demotest.repository.ProjectRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;

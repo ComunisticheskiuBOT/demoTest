@@ -10,20 +10,16 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestProduct;
-import org.example.demotest.dto.ServiceRequestProject;
-import org.example.demotest.entities.MaterialType;
 import org.example.demotest.entities.Product;
 import org.example.demotest.entities.ProductType;
 import org.example.demotest.entities.Project;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.ProductService;
-import org.example.demotest.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
 import java.util.Arrays;
 
 import static org.example.demotest.app_controllers.LoginController.sessionID;

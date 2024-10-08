@@ -21,11 +21,11 @@ public class Order {
     private Long orderId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable=false, updatable=false)
+    @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     private Client client;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable=false, updatable=false)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
     private Project project;
 
     @Column(name = "date_of_order")

@@ -1,11 +1,8 @@
 package org.example.demotest.web_controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.example.demotest.dto.ServiceRequestProduct;
 import org.example.demotest.dto.ServiceRequestQuality;
-import org.example.demotest.entities.Product;
 import org.example.demotest.entities.Quality;
-import org.example.demotest.services.ProductService;
 import org.example.demotest.services.QualityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

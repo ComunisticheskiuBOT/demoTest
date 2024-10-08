@@ -3,7 +3,6 @@ package org.example.demotest;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.example.demotest.managers.LoginManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;

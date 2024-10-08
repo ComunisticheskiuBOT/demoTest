@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.demotest.dto.ServiceRequestEmployee;
 import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Employee;
-import org.example.demotest.entities.Project;
 import org.example.demotest.repository.DepartmentRepository;
 import org.example.demotest.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
