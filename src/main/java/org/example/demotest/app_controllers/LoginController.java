@@ -4,22 +4,23 @@ import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.demotest.managers.LoginManager;
-import org.example.demotest.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.demotest.services.EmployeeService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LoginController {
     @FXML private TextField user;
-    @FXML private TextField password;
+    @FXML private PasswordField password;
     @FXML private Button loginButton;
 
     private static final String DEVELOPER_PASSWORD = "devpassword";
     private static final Long DEVELOPER_ID = 0L;
 
 
-    private UserService userService;
-
+    public EmployeeService employeeService;
+    public LoginController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
     public void initialize() {}
 
     public void initManager(final LoginManager loginManager) {
@@ -33,25 +34,17 @@ public class LoginController {
         });
     }
 
-    private String authorize() {
+    public String authorize() {
         String user_password = this.password.getText();
 
         if (DEVELOPER_PASSWORD.equals(user_password)) {
             return generateSessionID(DEVELOPER_ID);
         }
 
-        Long employee_id = Long.parseLong(user.getText());
+        Long passportNumber = Long.parseLong(user.getText());
 
-        boolean isValidUser = userService.validateUser(employee_id, user_password);
-        return isValidUser ? generateSessionID(employee_id) : null;
-    }
-
-    public void deleteUser(Long id) {
-        userService.deleteUserById(id);
-    }
-
-    public void deleteUserByEmployeeId(Long employeeId) {
-        userService.deleteUserByEmployeeId(employeeId);
+        boolean isValidUser = employeeService.validateUser(passportNumber, user_password);
+        return isValidUser ? generateSessionID(passportNumber) : null;
     }
 
     public static int sessionID = 0;

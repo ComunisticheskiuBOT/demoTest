@@ -7,13 +7,15 @@ import javafx.scene.*;
 import javafx.stage.Stage;
 import org.example.demotest.app_controllers.LoginController;
 import org.example.demotest.app_controllers.MainViewController;
+import org.springframework.context.ApplicationContext;
 
 public class LoginManager {
     private Stage stage;
+    private ApplicationContext applicationContext;
 
-
-    public LoginManager(Stage stage) {
+    public LoginManager(Stage stage, ApplicationContext applicationContext) {
         this.stage = stage;
+        this.applicationContext = applicationContext;
     }
 
     public void authenticated(String sessionID) {
@@ -27,6 +29,7 @@ public class LoginManager {
     public void showLoginScreen() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            loader.setControllerFactory(applicationContext::getBean);
             Parent root = loader.load();
 
             if (stage == null) {
@@ -39,6 +42,7 @@ public class LoginManager {
             stage.show();
 
             LoginController controller = loader.getController();
+
             controller.initManager(this);
         } catch (IOException ex) {
             Logger.getLogger(LoginManager.class.getName()).log(Level.SEVERE, "Error loading FXML", ex);
@@ -60,16 +64,16 @@ public class LoginManager {
             stage.show();
 
             MainViewController controller = loader.getController();
+            loader.setControllerFactory(applicationContext::getBean);
 
             controller.initSessionID(this, sessionID);
-            controller.initUsersWindow(new MainViewManager(stage));
-            controller.initWorkersWindow(new MainViewManager(stage));
-            controller.initOrdersWindow(new MainViewManager(stage));
-            controller.initCustomersWindow(new MainViewManager(stage));
-            controller.initProductsWindow(new MainViewManager(stage));
-            controller.initComponentsWindow(new MainViewManager(stage));
-            controller.initMaterialsWindow(new MainViewManager(stage));
-            controller.initTransportsWindow(new MainViewManager(stage));
+            controller.initWorkersWindow(new MainViewManager(stage, applicationContext));
+            controller.initOrdersWindow(new MainViewManager(stage, applicationContext));
+            controller.initDepartmentsWindow(new MainViewManager(stage, applicationContext));
+            controller.initClientsWindow(new MainViewManager(stage, applicationContext));
+            controller.initProjectsWindow(new MainViewManager(stage, applicationContext));
+            controller.initProductsWindow(new MainViewManager(stage, applicationContext));
+            controller.initQualitiesWindow(new MainViewManager(stage, applicationContext));
 
         } catch (IOException ex) {
             Logger.getLogger(LoginManager.class.getName()).log(Level.SEVERE, null, ex);

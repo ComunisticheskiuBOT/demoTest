@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.control.Button?>
-
-<Pane xmlns:fx="http://javafx.com/fxml/1" fx:controller = "org.example.demotest.app_controllers.alertController">
-    <Button text="Show Alert" onAction="#handleShowAlert"/>
-</Pane>

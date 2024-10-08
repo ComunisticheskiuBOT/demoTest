@@ -5,21 +5,54 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Date;
 @Data
 @SuperBuilder
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
-@Table(name = "Employees")
+@Table(name = "\"employees\"")
 public class Employee {
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "employee_id")
-    private Long employee_id;
+    private Long id;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "second_name")
+    private String secondName;
+    @Column(name = "last_name")
+    private String lastName;
+    @Column(name = "birth_date")
+    private Date birthDate;
+    @Column(name = "passport_number")
+    private Long passportNumber;
+    @Column(name = "address")
+    private String address;
+    @Column(name = "phone_number")
+    private String phoneNumber;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "password")
+    private String passWord;
+    @Column(name = "hire_date")
+    private Date hireDate;
+    @Column(name = "termination_date")
+    private Date terminationDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id", referencedColumnName = "department_id", insertable=false, updatable=false)
+    private Department department;
+    @Column(name = "department_id")
+    private Long departmentId;
+
+    @Column(name = "position")
+    private String position;
+    @Column(name = "status")
+    private Status status;
     @Column(name = "salary")
     private Integer salary;
-    @Column(name = "post")
-    private String post;
-    @Column(name = "post_description")
-    private String post_desc;
+    @Column(name = "comments")
+    private String comments;
 }

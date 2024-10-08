@@ -6,6 +6,7 @@ import org.example.demotest.managers.LoginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -13,10 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "org.example.demotest.repository")
 public class DemoTestApplication extends Application {
-
-	@Autowired
-	private org.example.demotest.app_controllers.welcomeController welcomeController;
-
+	public ApplicationContext applicationContext;
 	private ConfigurableApplicationContext springContext;
 
 	public static void main(String[] args) {
@@ -31,8 +29,9 @@ public class DemoTestApplication extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		this.applicationContext = springContext;
 		stage.setTitle("Авторизация");
-		LoginManager loginManager = new LoginManager(stage);
+		LoginManager loginManager = new LoginManager(stage, applicationContext);
 		loginManager.showLoginScreen();
 	}
 

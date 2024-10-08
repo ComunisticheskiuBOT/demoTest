@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Date;
+
 @Data
 @SuperBuilder
 @AllArgsConstructor
@@ -15,19 +18,27 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private Long order_id;
-    @Column(name = "customer_id")
-    private Long customer_id;
-    @Column(name = "product_id")
-    private Long product_id;
-    @Column(name = "name_of_order")
-    private String name_of_order;
-    @Column(name = "name_of_customer")
-    private String name_of_customer;
-    @Column(name = "date_of_delivery")
-    private String date_of_delivery;
-    @Column(name = "date_of_acceptance")
-    private String date_of_acceptance;
+    private Long orderId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "client_id", referencedColumnName = "client_id", insertable=false, updatable=false)
+    private Client client;
+    @Column(name = "client_id")
+    private Long clientId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id", insertable=false, updatable=false)
+    private Project project;
+    @Column(name = "project_id")
+    private Long projectId;
+
+    @Column(name = "date_of_order")
+    private Date dateOfOrder;
+    @Column(name = "date_of_execution")
+    private Date dateOfExecution;
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     @Column(name = "order_description")
-    private String order_description;
+    private String orderDescription;
 }

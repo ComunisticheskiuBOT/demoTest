@@ -11,14 +11,13 @@ import org.springframework.stereotype.Component;
 public class MainViewController {
 
     @FXML private Button logoutButton;
-    @FXML private Button usersButton;
     @FXML private Button workersButton;
     @FXML private Button ordersButton;
-    @FXML private Button customersButton;
+    @FXML private Button clientButton;
+    @FXML private Button departmentButton;
+    @FXML private Button projectsButton;
     @FXML private Button productsButton;
-    @FXML private Button componentsButton;
-    @FXML private Button materialsButton;
-    @FXML private Button transportsButton;
+    @FXML private Button qualitiesButton;
     @FXML private Label  sessionLabel;
 
     private MainViewManager mainViewManager;
@@ -34,18 +33,10 @@ public class MainViewController {
         });
     }
 
-    public void initUsersWindow(final MainViewManager mainViewManager) {
-        usersButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
-            }
-        });
-    }
-
     public void initWorkersWindow(final MainViewManager mainViewManager) {
         workersButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
+                mainViewManager.employees();
             }
         });
     }
@@ -53,15 +44,39 @@ public class MainViewController {
     public void initOrdersWindow(final MainViewManager mainViewManager) {
         ordersButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
+                mainViewManager.orders();
             }
         });
     }
 
-    public void initCustomersWindow(final MainViewManager mainViewManager) {
-        customersButton.setOnAction(new EventHandler<ActionEvent>() {
+    public void initDepartmentsWindow(final MainViewManager mainViewManager) {
+        departmentButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
+                mainViewManager.departments();
+            }
+        });
+    }
+
+    public void initClientsWindow(final MainViewManager mainViewManager) {
+        clientButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) {
+                mainViewManager.clients();
+            }
+        });
+    }
+
+    public void initProjectsWindow(final MainViewManager mainViewManager) {
+        projectsButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) {
+                mainViewManager.projects();
+            }
+        });
+    }
+
+    public void initQualitiesWindow(final MainViewManager mainViewManager) {
+        qualitiesButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent event) {
+                mainViewManager.qualities();
             }
         });
     }
@@ -69,31 +84,7 @@ public class MainViewController {
     public void initProductsWindow(final MainViewManager mainViewManager) {
         productsButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
-            }
-        });
-    }
-
-    public void initComponentsWindow(final MainViewManager mainViewManager) {
-        componentsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
-            }
-        });
-    }
-
-    public void initMaterialsWindow(final MainViewManager mainViewManager) {
-        materialsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
-            }
-        });
-    }
-
-    public void initTransportsWindow(final MainViewManager mainViewManager) {
-        transportsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.users();
+                mainViewManager.products();
             }
         });
     }

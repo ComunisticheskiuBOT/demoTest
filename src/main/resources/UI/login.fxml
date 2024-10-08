@@ -12,10 +12,10 @@
                     <children>
                         <GridPane>
                             <children>
-                                <Label text="Имя:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label text="Номер паспорта:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                                 <Label text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <TextField fx:id="user" promptText="Use &quot;open&quot; to login" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                <TextField fx:id="password" promptText="Use &quot;sesame&quot; to login" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <TextField fx:id="user" promptText="Enter &quot;passport" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <PasswordField fx:id="password" promptText="Enter &quot;password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                             </children>
                             <columnConstraints>
                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="109.0" />

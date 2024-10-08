@@ -10,14 +10,13 @@
 
             <Label text="Список таблиц" style="-fx-font-size: 16; -fx-font-weight: bold;" />
             <VBox  fx:id="buttonContainer"  alignment="CENTER" StackPane.alignment="CENTER">
-                <Button id="usersButton" fx:id="usersButton" text="Пользователи" prefWidth="150" prefHeight="40" />
                 <Button id="workersButton" fx:id="workersButton" text="Работники" prefWidth="150" prefHeight="40" />
                 <Button id="ordersButton" fx:id="ordersButton" text="Заказы" prefWidth="150" prefHeight="40"  />
-                <Button id="customersButton" fx:id="customersButton" text="Заказчики" prefWidth="150" prefHeight="40"  />
-                <Button id="productsButton" fx:id="productsButton" text="Продукция" prefWidth="150" prefHeight="40"  />
-                <Button id="componentsButton" fx:id="componentsButton" text="Составляющие" prefWidth="150" prefHeight="40"  />
-                <Button id="materialsButton" fx:id="materialsButton" text="Материал" prefWidth="150" prefHeight="40" />
-                <Button id="transportsButton" fx:id="transportsButton" text="Транспорт" prefWidth="150" prefHeight="40" />
+                <Button id="clientsButton" fx:id="clientButton" text="Клиенты" prefWidth="150" prefHeight="40"  />
+                <Button id="departmentButton" fx:id="departmentButton" text="Отделы" prefWidth="150" prefHeight="40"  />
+                <Button id="projectsButton" fx:id="projectsButton" text="Проекты" prefWidth="150" prefHeight="40"  />
+                <Button id="productsButton" fx:id="productsButton" text="Продукты" prefWidth="150" prefHeight="40"  />
+                <Button id="qualitiesButton" fx:id="qualitiesButton" text="Качество" prefWidth="150" prefHeight="40" />
             </VBox>
 
             <GridPane>
