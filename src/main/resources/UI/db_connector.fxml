@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane prefWidth="231.0"   xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.demotest.app_controllers.LoginController" >
+<StackPane prefWidth="231.0"   xmlns:fx="http://javafx.com/fxml" fx:controller="org.example.demotest.app_controllers.ConnectorController" >
     <children>
         <StackPane>
             <children>
@@ -12,10 +12,12 @@
                     <children>
                         <GridPane>
                             <children>
-                                <Label text="Номер паспорта:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                <Label text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <TextField fx:id="user" promptText="Введите паспорт" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                <PasswordField fx:id="password" promptText="Введите пароль" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <Label text="URL:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label text="Пользователь:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label text="Пароль:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <TextField fx:id="url" promptText="Введите url" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <TextField fx:id="username" promptText="Введите пользователя" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <PasswordField fx:id="password" promptText="Введите пароль" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                             </children>
                             <columnConstraints>
                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="109.0" />
@@ -24,12 +26,13 @@
                             <rowConstraints>
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                         </GridPane>
                         <StackPane prefHeight="-1.0" prefWidth="-1.0">
                             <children>
-                                <Button fx:id="loginButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Залогиниться" StackPane.alignment="CENTER_RIGHT" />
-                                <Button fx:id="connectButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Коннектор БД" StackPane.alignment="CENTER_LEFT" />
+                                <Button fx:id="connectorButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Соединиться" StackPane.alignment="CENTER_LEFT" />
+                                <Button fx:id="toLogin" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Авторизироваться" StackPane.alignment="CENTER_RIGHT" />
                             </children>
                         </StackPane>
                     </children>

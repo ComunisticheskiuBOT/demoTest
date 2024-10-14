@@ -1,8 +1,9 @@
 package org.example.demotest;
 
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.example.demotest.managers.LoginManager;
+import org.example.demotest.managers.ConnectorManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -29,9 +30,10 @@ public class DemoTestApplication extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		this.applicationContext = springContext;
-		stage.setTitle("Авторизация");
-		LoginManager loginManager = new LoginManager(stage, applicationContext);
-		loginManager.showLoginScreen();
+		stage.setTitle("Коннектор БД");
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon.png")));
+		ConnectorManager connectorManager = new ConnectorManager(stage, applicationContext);
+		connectorManager.showConnectorScreen();
 	}
 
 	@Override

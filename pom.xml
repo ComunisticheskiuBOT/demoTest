@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>org.example</groupId>
 	<artifactId>demoTest</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>demoTest</name>
-	<description>demoTest</description>
+	<version>0.0.1</version>
+	<name>DataBaseKFDB</name>
+	<description>DataBaseKFDB</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>22</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 
@@ -132,7 +132,50 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>jpackage</executable>
+					<arguments>
+						<argument>--input</argument>
+						<argument>target</argument>
+						<argument>--name</argument>
+						<argument>DataBaseKFDB</argument>
+						<argument>--main-jar</argument>
+						<argument>demoTest-0.0.1.jar</argument>
+						<argument>--type</argument>
+						<argument>app-image</argument>
+						<argument>--icon</argument>
+						<argument>src/main/resources/images/icon.ico</argument>
+						<argument>--dest</argument>
+						<argument>build-output</argument>
+					</arguments>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>

@@ -36,7 +36,7 @@ public class LoginManager {
                 throw new IllegalStateException("Stage is not initialized");
             }
 
-            Scene scene = new Scene(root, 250, 150);
+            Scene scene = new Scene(root, 300, 150);
             stage.setTitle("Авторизация");
             stage.setScene(scene);
             stage.show();
@@ -44,6 +44,7 @@ public class LoginManager {
             LoginController controller = loader.getController();
 
             controller.initManager(this);
+            controller.initConnected(new ConnectorManager(stage, applicationContext));
         } catch (IOException ex) {
             Logger.getLogger(LoginManager.class.getName()).log(Level.SEVERE, "Error loading FXML", ex);
         } catch (IllegalStateException ex) {
@@ -58,7 +59,7 @@ public class LoginManager {
             );
 
             Parent root = loader.load();
-            Scene scene = new Scene(root, 250, 500);
+            Scene scene = new Scene(root, 300, 500);
             stage.setTitle("Панель управления");
             stage.setScene(scene);
             stage.show();
