@@ -44,6 +44,7 @@ public class EmployeeService {
                     .terminationDate(serviceRequestEmployee.getTerminationDate())
                     .department(serviceRequestEmployee.getDepartment())
                     .position(serviceRequestEmployee.getPosition())
+                    .role(serviceRequestEmployee.getRole())
                     .status(serviceRequestEmployee.getStatus())
                     .salary(serviceRequestEmployee.getSalary())
                     .comments(serviceRequestEmployee.getComments())
@@ -59,7 +60,7 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Employee> findEmployeeByPassportNumber(Integer passportNumber) {
+    public Optional<Employee> findEmployeeByPassportNumber(Long passportNumber) {
         return employeeRepository.findByPassportNumber(passportNumber);
     }
 
@@ -82,6 +83,11 @@ public class EmployeeService {
         return departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new RuntimeException("Отдел с ID '" + departmentId + "' не найден"));
     }
+
+    public Optional<Employee> getEmployeeByPassport(Long passport) {
+        return employeeRepository.findByPassportNumber(passport);
+    }
+
 
     public boolean validateUser(Long passportNumber, String password) {
         return employeeRepository.findByPassportNumberAndPassWord(passportNumber, password) != null;
@@ -124,6 +130,9 @@ public class EmployeeService {
             }
             if (updatedEmployee.getPosition() != null) {
                 employee.setPosition(updatedEmployee.getPosition());
+            }
+            if (updatedEmployee.getRole() != null) {
+                employee.setRole(updatedEmployee.getRole());
             }
             if (updatedEmployee.getStatus() != null) {
                 employee.setStatus(updatedEmployee.getStatus());

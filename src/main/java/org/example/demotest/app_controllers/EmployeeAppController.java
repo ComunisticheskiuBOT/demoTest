@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestEmployee;
+import org.example.demotest.entities.Role;
 import org.example.demotest.entities.Department;
 import org.example.demotest.entities.Employee;
 import org.example.demotest.entities.Status;
@@ -23,8 +24,6 @@ import org.springframework.web.client.RestTemplate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Arrays;
-
-import static org.example.demotest.app_controllers.LoginController.sessionID;
 
 @Controller
 public class EmployeeAppController {
@@ -40,7 +39,6 @@ public class EmployeeAppController {
             return null;
         });
     }
-
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
             if (change.getControlNewText().matches("\\d*")) {
@@ -49,8 +47,11 @@ public class EmployeeAppController {
             return null;
         });
     }
-
     private TextFormatter<String> createNumeric10Filter() {
+        return Numeric10Filter();
+    }
+
+    static TextFormatter<String> Numeric10Filter() {
         return new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
 
@@ -67,6 +68,10 @@ public class EmployeeAppController {
     }
 
     private TextFormatter<String> createPhoneFilter() {
+        return PhoneFilter();
+    }
+
+    static TextFormatter<String> PhoneFilter() {
         return new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
 
@@ -89,6 +94,10 @@ public class EmployeeAppController {
     }
 
     private TextFormatter<String> createDateFilter() {
+        return DateFilter();
+    }
+
+    static TextFormatter<String> DateFilter() {
         return new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
 
@@ -108,8 +117,8 @@ public class EmployeeAppController {
         });
     }
 
-    private RestTemplate restTemplate = new RestTemplate();
-    private String url = "http://localhost:8080/employee-api/v1/employees";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String url = "http://localhost:8080/employee-api/v1/employees";
 
     //Таблица
     @FXML private TableView<Employee> employeeTable;
@@ -127,42 +136,41 @@ public class EmployeeAppController {
     @FXML private TableColumn<Employee, Date> termination_date;
     @FXML private TableColumn<Employee, Long> department_id;
     @FXML private TableColumn<Employee, String> Position;
+    @FXML private TableColumn<Employee, Role> Role;
     @FXML private TableColumn<Employee, Status> Status;
-    @FXML private TableColumn<Employee, String> Salary;
-    @FXML private TableColumn<Employee, String> Comments;
+    @FXML private TableColumn<Employee, String> Salary, Comments;
+
+    //Заголовки для создания пользователя
+    @FXML private Label surnameLabel, nameLabel, secondNameLabel, dateBirthLabel, passportLabel, addressLabel, numberLabel,
+                        mailLabel, passwordLabel, dateAcceptanceLabel, dateDismissalLabel, idLabel, postLabel, roleLabel,
+                        statusLabel, salaryLabel, descLabel;
 
     //Поля для создания пользователя
-    @FXML private TextField secondNameField;
-    @FXML private TextField firstNameField;
-    @FXML private TextField lastNameField;
-    @FXML private TextField birthDateField;
-    @FXML private TextField passportNumberField;
-    @FXML private TextField addressField;
-    @FXML private TextField phoneNumberField;
-    @FXML private TextField emailField;
+    @FXML private TextField secondNameField, firstNameField, lastNameField, birthDateField, passportNumberField,
+                            addressField, phoneNumberField, emailField, hireDateField, terminationDateField,
+                            departmentIdField, positionField, salaryField, commentsField;
     @FXML private PasswordField passwordField;
-    @FXML private TextField hireDateField;
-    @FXML private TextField terminationDateField;
-    @FXML private TextField departmentIdField;
-    @FXML private TextField positionField;
+    @FXML private ComboBox<Role> roleComboBox;
     @FXML private ComboBox<Status> statusComboBox;
-    @FXML private TextField salaryField;
-    @FXML private TextField commentsField;
 
     //Поля для удаления пользователя
-    @FXML private TextField deleteIdField;
+    @FXML private TextField deleteIdField, idFilter, surnameFilter, nameFilter, patronymicFilter, birthDateFilter;
+    @FXML private ComboBox<String> roleFilter, statusFilter;
 
-    //Фильтры
-    @FXML private TextField idFilter;
-    @FXML private TextField surnameFilter;
-    @FXML private TextField nameFilter;
-    @FXML private TextField patronymicFilter;
-    @FXML private TextField birthDateFilter;
-    @FXML private ComboBox<String> statusFilter;
+    //Кнопки
+    @FXML private Button deleteEmployeeButton, addEmployeeButton, cleanButton, updateEmployeeButton, handleBackButton;
     ObservableList<Employee> observableEmployeeList = FXCollections.observableArrayList();
 
+    @Autowired
+    private EmployeeService employeeService;
 
-    public void initialize() {
+    private Long userPassport;
+    private Role userRole;
+
+    public void initialize(Long userPassport) {
+        this.userPassport = userPassport;
+        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         first_name.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         second_name.setCellValueFactory(new PropertyValueFactory<>("secondName"));
@@ -181,22 +189,25 @@ public class EmployeeAppController {
         });
 
         Position.setCellValueFactory(new PropertyValueFactory<>("Position"));
+        Role.setCellValueFactory(new PropertyValueFactory<>("Role"));
         Status.setCellValueFactory(new PropertyValueFactory<>("Status"));
         Salary.setCellValueFactory(new PropertyValueFactory<>("Salary"));
         Comments.setCellValueFactory(new PropertyValueFactory<>("Comments"));
-        statusComboBox.getItems().setAll(org.example.demotest.entities.Status.values());
 
-        firstNameField.setTextFormatter(createAlphaFilter());
-        secondNameField.setTextFormatter(createAlphaFilter());
-        lastNameField.setTextFormatter(createAlphaFilter());
-        positionField.setTextFormatter(createAlphaFilter());
-        birthDateField.setTextFormatter(createDateFilter());
-        passportNumberField.setTextFormatter(createNumeric10Filter());
-        departmentIdField.setTextFormatter(createNumericFilter());
-        salaryField.setTextFormatter(createNumeric10Filter());
-        phoneNumberField.setTextFormatter(createPhoneFilter());
-        hireDateField.setTextFormatter(createDateFilter());
-        terminationDateField.setTextFormatter(createDateFilter());
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            statusComboBox.getItems().setAll(org.example.demotest.entities.Status.values());
+            firstNameField.setTextFormatter(createAlphaFilter());
+            secondNameField.setTextFormatter(createAlphaFilter());
+            lastNameField.setTextFormatter(createAlphaFilter());
+            positionField.setTextFormatter(createAlphaFilter());
+            birthDateField.setTextFormatter(createDateFilter());
+            passportNumberField.setTextFormatter(createNumeric10Filter());
+            departmentIdField.setTextFormatter(createNumericFilter());
+            salaryField.setTextFormatter(createNumeric10Filter());
+            phoneNumberField.setTextFormatter(createPhoneFilter());
+            hireDateField.setTextFormatter(createDateFilter());
+            terminationDateField.setTextFormatter(createDateFilter());
+        }
 
         setupFilters();
         loadEmployees();
@@ -209,23 +220,16 @@ public class EmployeeAppController {
 
     @FXML
     private void handleCleanButton(){
-        secondNameField.setText(null);
-        firstNameField.setText(null);
-        lastNameField.setText(null);
-        birthDateField.setText(null);
-        passportNumberField.setText(null);
-        addressField.setText(null);
-        phoneNumberField.setText(null);
-        emailField.setText(null);
-        passwordField.setText(null);
-        hireDateField.setText(null);
-        terminationDateField.setText(null);
-        deleteIdField.setText(null);
-        departmentIdField.setText(null);
-        positionField.setText(null);
+        TextField[] textFields = {
+                secondNameField, firstNameField, lastNameField, birthDateField, passportNumberField,
+                addressField, phoneNumberField, emailField, passwordField, hireDateField, terminationDateField,
+                deleteIdField, departmentIdField, positionField, salaryField, commentsField
+        };
+        for (TextField textField : textFields) {
+            textField.setText(null);
+        }
+        roleComboBox.getSelectionModel().clearSelection();
         statusComboBox.getSelectionModel().clearSelection();
-        salaryField.setText(null);
-        commentsField.setText(null);
     }
 
     private void loadEmployees() {
@@ -246,48 +250,49 @@ public class EmployeeAppController {
     @FXML
     private void handleAddEmployee(ActionEvent event) {
         try {
-            Long departmentIdValue = Long.valueOf(departmentIdField.getText());
-            // Получите объект Project из службы, а не только его ID
-            Department department = employeeService.getDepartmentById(departmentIdValue);
+            if(userRole == org.example.demotest.entities.Role.ADMIN) {
+                Long departmentIdValue = Long.valueOf(departmentIdField.getText());
+                Department department = employeeService.getDepartmentById(departmentIdValue);
 
-            if (department == null) {
-                System.out.println("Отдел с указанным ID не найден.");
-                return;
-            }
+                if (department == null) {
+                    System.out.println("Отдел с указанным ID не найден.");
+                    return;
+                }
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            Date parsedBirthDate = sdf.parse(birthDateField.getText());
-            Date parsedHireDate = sdf.parse(hireDateField.getText());
-            Date parsedTerminationDate = terminationDateField.getText().isEmpty()
-                    ? null
-                    : sdf.parse(terminationDateField.getText());
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date parsedBirthDate = sdf.parse(birthDateField.getText());
+                Date parsedHireDate = sdf.parse(hireDateField.getText());
+                Date parsedTerminationDate = terminationDateField.getText().isEmpty()
+                        ? null
+                        : sdf.parse(terminationDateField.getText());
 
-            ServiceRequestEmployee newEmployee = ServiceRequestEmployee.builder()
-                    .firstName(firstNameField.getText())
-                    .secondName(secondNameField.getText())
-                    .lastName(lastNameField.getText())
-                    .birthDate(parsedBirthDate)
-                    .phoneNumber(phoneNumberField.getText())
-                    .address(addressField.getText())
-                    .passportNumber(Long.valueOf(passportNumberField.getText()))
-                    .email(emailField.getText())
-                    .password(passwordField.getText())
-                    .hireDate(parsedHireDate)
-                    .terminationDate(parsedTerminationDate)
-                    .department(department)
-                    .position(positionField.getText())
-                    .status(statusComboBox.getValue())
-                    .salary(Integer.valueOf(salaryField.getText()))
-                    .comments(commentsField.getText())
-                    .build();
-            Employee employeeCreated = restTemplate.postForObject(url, newEmployee, Employee.class);
-            if (employeeCreated != null) {
-                observableEmployeeList.add(employeeCreated); // Используйте observableUserList
-                employeeTable.setItems(observableEmployeeList);
-                System.out.println("Пользователь добавлен: " + employeeCreated);
+                ServiceRequestEmployee newEmployee = ServiceRequestEmployee.builder()
+                        .firstName(firstNameField.getText())
+                        .secondName(secondNameField.getText())
+                        .lastName(lastNameField.getText())
+                        .birthDate(parsedBirthDate)
+                        .phoneNumber(phoneNumberField.getText())
+                        .address(addressField.getText())
+                        .passportNumber(Long.valueOf(passportNumberField.getText()))
+                        .email(emailField.getText())
+                        .password(passwordField.getText())
+                        .hireDate(parsedHireDate)
+                        .terminationDate(parsedTerminationDate)
+                        .department(department)
+                        .position(positionField.getText())
+                        .role(roleComboBox.getValue())
+                        .status(statusComboBox.getValue())
+                        .salary(Integer.valueOf(salaryField.getText()))
+                        .comments(commentsField.getText())
+                        .build();
+                Employee employeeCreated = restTemplate.postForObject(url, newEmployee, Employee.class);
+                if (employeeCreated != null) {
+                    observableEmployeeList.add(employeeCreated); // Используйте observableUserList
+                    employeeTable.setItems(observableEmployeeList);
+                    System.out.println("Пользователь добавлен: " + employeeCreated);
+                }
             }
         } catch (Exception e) {
-            // Логирование ошибки и/или уведомление пользователя
             e.printStackTrace();
 
             System.out.println("Ошибка при добавлении сотрудника: " + e.getMessage());
@@ -296,11 +301,11 @@ public class EmployeeAppController {
 
     private void setupFilters() {
         idFilter.setTextFormatter(createNumericFilter());
-
         idFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
         surnameFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
         nameFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
         patronymicFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        roleFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyFilters());
         statusFilter.valueProperty().addListener((observable, oldValue, newValue) -> applyFilters());
         birthDateFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
     }
@@ -311,6 +316,7 @@ public class EmployeeAppController {
         String name = nameFilter.getText().toLowerCase();
         String patronymic = patronymicFilter.getText().toLowerCase();
         String statusFilterValue = statusFilter.getValue();
+        String roleFilterValue = roleFilter.getValue();
         String birthDateText = birthDateFilter.getText();
 
         employeeTable.setItems(observableEmployeeList.filtered(employee -> {
@@ -318,9 +324,9 @@ public class EmployeeAppController {
             boolean matchesSurname = surname.isEmpty() || employee.getSecondName().toLowerCase().contains(surname);
             boolean matchesName = name.isEmpty() || employee.getFirstName().toLowerCase().contains(name);
             boolean matchesPatronymic = patronymic.isEmpty() || employee.getLastName().toLowerCase().contains(patronymic);
+            boolean matchesRoles = roleFilterValue == null || "ALL".equals(roleFilterValue) || employee.getRole().name().equalsIgnoreCase(roleFilterValue);
             boolean matchesStatus = statusFilterValue == null || "ALL".equals(statusFilterValue) || employee.getStatus().name().equalsIgnoreCase(statusFilterValue);
 
-            // Фильтр по дате рождения
             boolean matchesBirthDate = birthDateText.isEmpty();
             if (!matchesBirthDate) {
                 try {
@@ -333,31 +339,28 @@ public class EmployeeAppController {
                 }
             }
 
-            // Возвращаем результат проверки всех фильтров
-            return matchesId && matchesSurname && matchesName && matchesPatronymic && matchesStatus && matchesBirthDate;
+            return matchesId && matchesSurname && matchesName && matchesPatronymic && matchesRoles && matchesStatus && matchesBirthDate;
         }));
     }
 
-
-    @Autowired
-    private EmployeeService employeeService;
-
     @FXML
     private void handleDeleteEmployee() {
-        Long idText = Long.valueOf(deleteIdField.getText());
+        if(userRole == org.example.demotest.entities.Role.ADMIN) {
+            Long idText = Long.valueOf(deleteIdField.getText());
 
-        if (idText != null) {
-            // Найдем пользователя по Id
-            Employee employee = employeeService.findEmployeeById(idText);
-            if (employee != null) {
-                employeeService.deleteEmployee(employee.getId());
-                loadEmployees();
+            if (idText != null) {
+                // Найдем пользователя по Id
+                Employee employee = employeeService.findEmployeeById(idText);
+                if (employee != null) {
+                    employeeService.deleteEmployee(employee.getId());
+                    loadEmployees();
+                } else {
+                    System.out.println("Пользователь с указанным ID не найден");
+                }
             } else {
-                System.out.println("Пользователь с указанным ID не найден");
+                // Обработка ситуации, если оба поля пусты
+                System.out.println("Введите ID для удаления сотрудника");
             }
-        } else {
-            // Обработка ситуации, если оба поля пусты
-            System.out.println("Введите ID для удаления сотрудника");
         }
     }
 
@@ -365,6 +368,6 @@ public class EmployeeAppController {
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LoginManager loginManager = new LoginManager(stage, applicationContext);
-        loginManager.showMainView(String.valueOf(sessionID));
+        loginManager.showMainView(userPassport);
     }
 }

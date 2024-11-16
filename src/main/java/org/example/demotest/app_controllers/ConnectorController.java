@@ -12,19 +12,8 @@ import org.example.demotest.managers.ConnectorManager;
 import org.example.demotest.managers.LoginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
-
-import javax.sql.DataSource;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.example.demotest.app_controllers.LoginController.sessionID;
 
 @Component
 public class ConnectorController {
@@ -45,7 +34,7 @@ public class ConnectorController {
     public void initLoginWindow(final ConnectorManager connectorManager) {
         toLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent event) {
-                connectorManager.tologin();
+                connectorManager.login();
             }
         });
     }
@@ -56,7 +45,6 @@ public class ConnectorController {
     }
 
     public void updateDataSource() {
-        // Обновляем параметры DataSource
         dataSource.setUrl(url.getText());
         dataSource.setUsername(username.getText());
         dataSource.setPassword(password.getText());
@@ -68,6 +56,6 @@ public class ConnectorController {
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LoginManager loginManager = new LoginManager(stage, applicationContext);
-        loginManager.showMainView(String.valueOf(sessionID));
+        loginManager.showLoginScreen();
     }
 }

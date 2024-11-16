@@ -11,7 +11,9 @@ import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestProject;
 import org.example.demotest.entities.MaterialType;
 import org.example.demotest.entities.Project;
+import org.example.demotest.entities.Role;
 import org.example.demotest.managers.LoginManager;
+import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -20,8 +22,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.Arrays;
-
-import static org.example.demotest.app_controllers.LoginController.sessionID;
 
 @Controller
 public class ProjectAppController {
@@ -111,7 +111,16 @@ public class ProjectAppController {
     ObservableList<Project> observableProjectsList = FXCollections.observableArrayList();
 
 
-    public void initialize() {
+    @Autowired
+    private EmployeeService employeeService;
+
+    private Long userPassport;
+    private Role userRole;
+
+    public void initialize(Long userPassport) {
+        this.userPassport = userPassport;
+        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+
         ProjectId.setCellValueFactory(new PropertyValueFactory<>("ProjectId"));
         EngineerId.setCellValueFactory(new PropertyValueFactory<>("EngineerId"));
         ProjectName.setCellValueFactory(new PropertyValueFactory<>("ProjectName"));
@@ -119,11 +128,14 @@ public class ProjectAppController {
         MateriaLType.setCellValueFactory(new PropertyValueFactory<>("MaterialType"));
         ExpectedTime.setCellValueFactory(new PropertyValueFactory<>("ExpectedTime"));
         ProjectDescription.setCellValueFactory(new PropertyValueFactory<>("ProjectDescription"));
-        materialTypeField.getItems().setAll(org.example.demotest.entities.MaterialType.values());
 
-        projectNameField.setTextFormatter(createAlphaFilter());
-        engineerIdField.setTextFormatter(createNumericFilter());
-        expectedTimeField.setTextFormatter(createDurationFilter());
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+
+            materialTypeField.getItems().setAll(org.example.demotest.entities.MaterialType.values());
+            projectNameField.setTextFormatter(createAlphaFilter());
+            engineerIdField.setTextFormatter(createNumericFilter());
+            expectedTimeField.setTextFormatter(createDurationFilter());
+        }
 
         setupFilters();
         loadProjects();
@@ -136,13 +148,15 @@ public class ProjectAppController {
 
     @FXML
     private void handleCleanButton(){
-        engineerIdField.setText(null);
-        projectNameField.setText(null);
-        drawingField.setText(null);
-        deleteIdField.setText(null);
-        materialTypeField.getSelectionModel().clearSelection();
-        expectedTimeField.setText(null);
-        projectDescriptionField.setText(null);
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            engineerIdField.setText(null);
+            projectNameField.setText(null);
+            drawingField.setText(null);
+            deleteIdField.setText(null);
+            materialTypeField.getSelectionModel().clearSelection();
+            expectedTimeField.setText(null);
+            projectDescriptionField.setText(null);
+        }
     }
 
     private void loadProjects() {
@@ -163,27 +177,29 @@ public class ProjectAppController {
     @FXML
     private void handleAddProject(ActionEvent event) {
         try {
-            // Проверка на существование ID сотрудника
+            if(userRole == org.example.demotest.entities.Role.ADMIN) {
 
-            Long employeeId = Long.valueOf(engineerIdField.getText());
-            if (!projectService.engineerExists(employeeId)) { // Проверка существования
-                System.out.println("Сотрудник с указанным ID не найден.");
-                return;
-            }
 
-            ServiceRequestProject newProject = ServiceRequestProject.builder()
-                    .engineerId(Long.valueOf(engineerIdField.getText()))
-                    .projectName(projectNameField.getText())
-                    .drawing(drawingField.getText())
-                    .materialType(materialTypeField.getValue())
-                    .expectedTime(Duration.parse(expectedTimeField.getText()))
-                    .projectDescription(projectDescriptionField.getText())
-                    .build();
-            Project projectCreated = restTemplate.postForObject(url, newProject, Project.class);
-            if (projectCreated != null) {
-                observableProjectsList.add(projectCreated); // Используйте observableUserList
-                projectTable.setItems(observableProjectsList);
-                System.out.println("Проект добавлен: " + projectCreated);
+                Long employeeId = Long.valueOf(engineerIdField.getText());
+                if (!projectService.engineerExists(employeeId)) { // Проверка существования
+                    System.out.println("Сотрудник с указанным ID не найден.");
+                    return;
+                }
+
+                ServiceRequestProject newProject = ServiceRequestProject.builder()
+                        .engineerId(Long.valueOf(engineerIdField.getText()))
+                        .projectName(projectNameField.getText())
+                        .drawing(drawingField.getText())
+                        .materialType(materialTypeField.getValue())
+                        .expectedTime(Duration.parse(expectedTimeField.getText()))
+                        .projectDescription(projectDescriptionField.getText())
+                        .build();
+                Project projectCreated = restTemplate.postForObject(url, newProject, Project.class);
+                if (projectCreated != null) {
+                    observableProjectsList.add(projectCreated); // Используйте observableUserList
+                    projectTable.setItems(observableProjectsList);
+                    System.out.println("Проект добавлен: " + projectCreated);
+                }
             }
         } catch (Exception e) {
             // Логирование ошибки и/или уведомление пользователя
@@ -225,20 +241,23 @@ public class ProjectAppController {
     private ProjectService projectService;
     @FXML
     private void handleDeleteProject() {
-        Long idText = Long.valueOf(deleteIdField.getText());
+        if(userRole == org.example.demotest.entities.Role.ADMIN) {
 
-        if (idText != null) {
-            // Найдем пользователя по Id
-            Project project = projectService.findProjectById(idText);
-            if (project != null) {
-                projectService.deleteProject(project.getProjectId());
-                loadProjects();
+            Long idText = Long.valueOf(deleteIdField.getText());
+
+            if (idText != null) {
+                // Найдем пользователя по Id
+                Project project = projectService.findProjectById(idText);
+                if (project != null) {
+                    projectService.deleteProject(project.getProjectId());
+                    loadProjects();
+                } else {
+                    System.out.println("Проект с указанным ID не найден");
+                }
             } else {
-                System.out.println("Проект с указанным ID не найден");
+                // Обработка ситуации, если оба поля пусты
+                System.out.println("Введите ID для удаления проекта");
             }
-        } else {
-            // Обработка ситуации, если оба поля пусты
-            System.out.println("Введите ID для удаления проекта");
         }
     }
 
@@ -246,6 +265,6 @@ public class ProjectAppController {
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LoginManager loginManager = new LoginManager(stage, applicationContext);
-        loginManager.showMainView(String.valueOf(sessionID));
+        loginManager.showMainView(userPassport);
     }
 }

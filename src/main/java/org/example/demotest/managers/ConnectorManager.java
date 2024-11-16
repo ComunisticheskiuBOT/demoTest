@@ -24,13 +24,13 @@ public class ConnectorManager {
     public void connected() {
         showConnectorScreen();
     }
-    public void tologin() {
+    public void login() {
         showLoginScreen();
     }
 
     public void showLoginScreen() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CommonInterface/login.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
             Parent root = loader.load();
 
@@ -56,7 +56,7 @@ public class ConnectorManager {
 
     public void showConnectorScreen() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/db_connector.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CommonInterface/db_connector.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
             Parent root = loader.load();
 

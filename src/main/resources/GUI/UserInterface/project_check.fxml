@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<StackPane prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demotest.app_controllers.ProjectAppController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <StackPane>
+        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
+                <TextField fx:id="projectNameFilter" promptText="Фильтр по наименованию"/>
+                <TextField fx:id="drawingFilter" promptText="Фильтр по чертежу"/>
+                <ComboBox fx:id="materialTypeFilter">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="ALL"/>
+                            <String fx:value="TUBE"/>
+                            <String fx:value="PLATE"/>
+                            <String fx:value="SHEET"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
+                <Button fx:id="updateProjectButton" mnemonicParsing="false" text="Обновить"
+                        onAction="#handleUpdateProjects"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
+            </HBox>
+
+            <TableView fx:id="projectTable">
+                <columns>
+                    <TableColumn text="ID" fx:id="ProjectId"/>
+                    <TableColumn text="ID сотрудника-инженера" fx:id="EngineerId"/>
+                    <TableColumn text="Наименование проекта" fx:id="ProjectName"/>
+                    <TableColumn text="Чертёж" fx:id="Drawing"/>
+                    <TableColumn text="Тип Материала" fx:id="MateriaLType"/>
+                    <TableColumn text="Ожидаемое время" fx:id="ExpectedTime"/>
+                    <TableColumn text="Описание проекта" fx:id="ProjectDescription"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </StackPane>
+</StackPane>

@@ -26,7 +26,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/employee-api/v1/employees/passport/{passportNumber}")
-    public ResponseEntity<Employee> getEmployeeByPassportNumber(@PathVariable Integer passportNumber) {
+    public ResponseEntity<Employee> getEmployeeByPassportNumber(@PathVariable Long passportNumber) {
         return employeeService.findEmployeeByPassportNumber(passportNumber)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

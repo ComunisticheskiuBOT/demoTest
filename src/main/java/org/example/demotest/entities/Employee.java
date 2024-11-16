@@ -47,6 +47,8 @@ public class Employee {
 
     @Column(name = "position")
     private String position;
+    @Column(name = "role")
+    private Role role;
     @Column(name = "status")
     private Status status;
     @Column(name = "salary")

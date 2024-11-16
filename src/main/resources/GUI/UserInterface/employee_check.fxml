@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<StackPane prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demotest.app_controllers.EmployeeAppController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <StackPane>
+        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
+                <TextField fx:id="surnameFilter" promptText="Фильтр по Фамилии"/>
+                <TextField fx:id="nameFilter" promptText="Фильтр по Имени"/>
+                <TextField fx:id="patronymicFilter" promptText="Фильтр по Отчеству"/>
+                <TextField fx:id="birthDateFilter" promptText="Фильтр по дате рождения"/>
+                <ComboBox fx:id="roleFilter">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="ALL"/>
+                            <String fx:value="USER"/>
+                            <String fx:value="MODERATOR"/>
+                            <String fx:value="ADMIN"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <ComboBox fx:id="statusFilter">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="ALL"/>
+                            <String fx:value="ACTIVE"/>
+                            <String fx:value="NONACTIVE"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button fx:id="updateEmployeeButton" mnemonicParsing="false" text="Обновить"
+                        onAction="#handleUpdateEmployees"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
+            </HBox>
+
+            <TableView fx:id="employeeTable">
+                <columns>
+                    <TableColumn text="ID" fx:id="id"/>
+                    <TableColumn text="Фамилия" fx:id="second_name"/>
+                    <TableColumn text="Имя" fx:id="first_name"/>
+                    <TableColumn text="Отчество" fx:id="last_name"/>
+                    <TableColumn text="Дата Рождения" fx:id="birth_date"/>
+                    <TableColumn text="Паспорт" fx:id="passport_number"/>
+                    <TableColumn text="Адрес" fx:id="adDress"/>
+                    <TableColumn text="Номер телефона" fx:id="phone_number"/>
+                    <TableColumn text="Эл. Почта" fx:id="Email"/>
+                    <TableColumn text="Пароль" fx:id="pass_word"/>
+                    <TableColumn text="Дата трудоустройства" fx:id="hire_date"/>
+                    <TableColumn text="Дата увольнения" fx:id="termination_date"/>
+                    <TableColumn text="Отдел" fx:id="department_id"/>
+                    <TableColumn text="Должность" fx:id="Position"/>
+                    <TableColumn text="Статус" fx:id="Status"/>
+                    <TableColumn text="Права" fx:id="Role"/>
+                    <TableColumn text="Зарплата" fx:id="Salary"/>
+                    <TableColumn text="Описание" fx:id="Comments"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </StackPane>
+</StackPane>

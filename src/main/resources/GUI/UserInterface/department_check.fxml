@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demotest.app_controllers.DepartmentAppController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <StackPane>
+        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <children>
+                    <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
+                    <TextField fx:id="departmentNameFilter" promptText="Фильтр по наименованию"/>
+                    <TextField fx:id="locationFilter" promptText="Фильтр по локации"/>
+                </children>
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <children>
+                    <Button fx:id="updateDepartmentButton" mnemonicParsing="false" text="Обновить"
+                            onAction="#handleUpdateDepartments"/>
+                    <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                            onAction="#handleBackButton"/>
+                </children>
+            </HBox>
+
+            <TableView fx:id="departmentTable">
+                <columns>
+                    <TableColumn text="ID" fx:id="DepartmentId"/>
+                    <TableColumn text="Название отдела" fx:id="DepartmentName"/>
+                    <TableColumn text="Местоположение" fx:id="Location"/>
+                    <TableColumn text="Описание" fx:id="Description"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </StackPane>
+</StackPane>

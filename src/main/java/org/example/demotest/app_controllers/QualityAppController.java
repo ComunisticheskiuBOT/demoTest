@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestQuality;
 import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
+import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.QualityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -24,22 +25,13 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.example.demotest.app_controllers.LoginController.sessionID;
+import static org.example.demotest.app_controllers.EmployeeAppController.DateFilter;
 
 @Controller
 public class QualityAppController {
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    private TextFormatter<String> createAlphaFilter() {
-        return new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("[a-zA-Zа-яА-ЯёЁ]+")) {
-                return change;
-            }
-            return null;
-        });
-    }
 
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
@@ -51,23 +43,7 @@ public class QualityAppController {
     }
 
     private TextFormatter<String> createDateFilter() {
-        return new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-
-            if (newText.length() > 10) {
-                return null;
-            }
-
-            if (newText.matches("^\\d{0,2}$") ||             // День
-                    newText.matches("^\\d{2}-$") ||              // День-
-                    newText.matches("^\\d{2}-(0[1-9]?|1[0-2]?)$") || // День-месяц
-                    newText.matches("^\\d{2}-\\d{2}-$") ||       // День-месяц-
-                    newText.matches("^\\d{2}-\\d{2}-\\d{0,4}$")) {  // День-месяц-год
-                return change;
-            }
-
-            return null;
-        });
+        return DateFilter();
     }
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -100,8 +76,16 @@ public class QualityAppController {
     @FXML private ComboBox<String> resultTypeFilter;
     ObservableList<Quality> observableQualitiesList = FXCollections.observableArrayList();
 
+    @Autowired
+    private EmployeeService employeeService;
 
-    public void initialize() {
+    private Long userPassport;
+    private Role userRole;
+
+    public void initialize(Long userPassport) {
+        this.userPassport = userPassport;
+        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+
         QualityId.setCellValueFactory(new PropertyValueFactory<>("QualityId"));
         InspectorId.setCellValueFactory(cellData -> {
             Employee employee = cellData.getValue().getInspector();
@@ -114,11 +98,13 @@ public class QualityAppController {
         InspectionDate.setCellValueFactory(new PropertyValueFactory<>("InspectionDate"));
         ResulT.setCellValueFactory(new PropertyValueFactory<>("Result"));
         Comments.setCellValueFactory(new PropertyValueFactory<>("Comments"));
-        resultTypeField.getItems().setAll(Result.values());
 
-        inspectorIdField.setTextFormatter(createNumericFilter());
-        productIdField.setTextFormatter(createNumericFilter());
-        inspectionDateField.setTextFormatter(createDateFilter());
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            resultTypeField.getItems().setAll(Result.values());
+            inspectorIdField.setTextFormatter(createNumericFilter());
+            productIdField.setTextFormatter(createNumericFilter());
+            inspectionDateField.setTextFormatter(createDateFilter());
+        }
 
         setupFilters();
         loadQualities();
@@ -129,12 +115,14 @@ public class QualityAppController {
 
     @FXML
     private void handleCleanButton(){
-        inspectorIdField.setText(null);
-        productIdField.setText(null);
-        inspectionDateField.setText(null);
-        deleteIdField.setText(null);
-        resultTypeField.getSelectionModel().clearSelection();
-        commentsTimeField.setText(null);
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            inspectorIdField.setText(null);
+            productIdField.setText(null);
+            inspectionDateField.setText(null);
+            deleteIdField.setText(null);
+            resultTypeField.getSelectionModel().clearSelection();
+            commentsTimeField.setText(null);
+        }
     }
 
     private void loadQualities() {
@@ -157,42 +145,45 @@ public class QualityAppController {
     @FXML
     private void handleAddQuality(ActionEvent event) {
         try {
-            Long productIdValue = Long.valueOf(productIdField.getText());
-            Product product = qualityService.getProductById(productIdValue);
+            if (userRole == org.example.demotest.entities.Role.ADMIN) {
 
-            if (product == null) {
-                System.out.println("Продукт с указанным ID не найден.");
-                return;
-            }
+                Long productIdValue = Long.valueOf(productIdField.getText());
+                Product product = qualityService.getProductById(productIdValue);
 
-            Long inspectorIdValue = Long.valueOf(inspectorIdField.getText());
-            Employee employee = qualityService.getEmployeeById(inspectorIdValue);
+                if (product == null) {
+                    System.out.println("Продукт с указанным ID не найден.");
+                    return;
+                }
 
-            if (employee == null) {
-                System.out.println("Сотрудник с указанным ID не найден.");
-                return;
-            }
+                Long inspectorIdValue = Long.valueOf(inspectorIdField.getText());
+                Employee employee = qualityService.getEmployeeById(inspectorIdValue);
 
-            if (employee.getStatus() == Status.NONACTIVE) {
-                System.out.println("Инспектор неактивен. Проверку качества создать нельзя.");
-                return;
-            }
+                if (employee == null) {
+                    System.out.println("Сотрудник с указанным ID не найден.");
+                    return;
+                }
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            Date inspectionDate = sdf.parse(inspectionDateField.getText());
+                if (employee.getStatus() == Status.NONACTIVE) {
+                    System.out.println("Инспектор неактивен. Проверку качества создать нельзя.");
+                    return;
+                }
 
-            ServiceRequestQuality newQuality = ServiceRequestQuality.builder()
-                    .product(product)
-                    .inspector(employee)
-                    .inspectionDate(inspectionDate)
-                    .result(resultTypeField.getValue())
-                    .comments(commentsTimeField.getText())
-                    .build();
-            Quality qualityCreated = restTemplate.postForObject(url, newQuality, Quality.class);
-            if (qualityCreated != null) {
-                observableQualitiesList.add(qualityCreated); // Используйте observableUserList
-                qualityTable.setItems(observableQualitiesList);
-                System.out.println("Проверка качества продукта добавлена: " + qualityCreated);
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date inspectionDate = sdf.parse(inspectionDateField.getText());
+
+                ServiceRequestQuality newQuality = ServiceRequestQuality.builder()
+                        .product(product)
+                        .inspector(employee)
+                        .inspectionDate(inspectionDate)
+                        .result(resultTypeField.getValue())
+                        .comments(commentsTimeField.getText())
+                        .build();
+                Quality qualityCreated = restTemplate.postForObject(url, newQuality, Quality.class);
+                if (qualityCreated != null) {
+                    observableQualitiesList.add(qualityCreated); // Используйте observableUserList
+                    qualityTable.setItems(observableQualitiesList);
+                    System.out.println("Проверка качества продукта добавлена: " + qualityCreated);
+                }
             }
         } catch (Exception e) {
             // Логирование ошибки и/или уведомление пользователя
@@ -232,20 +223,21 @@ public class QualityAppController {
     private QualityService qualityService;
     @FXML
     private void handleDeleteQuality() {
-        Long idText = Long.valueOf(deleteIdField.getText());
+        if (userRole == org.example.demotest.entities.Role.ADMIN) {
 
-        if (idText != null) {
-            // Найдем пользователя по Id
-            Quality quality = qualityService.findQualityById(idText);
-            if (quality != null) {
-                qualityService.deleteQuality(quality.getQualityId());
-                loadQualities();
+            Long idText = Long.valueOf(deleteIdField.getText());
+
+            if (idText != null) {
+                Quality quality = qualityService.findQualityById(idText);
+                if (quality != null) {
+                    qualityService.deleteQuality(quality.getQualityId());
+                    loadQualities();
+                } else {
+                    System.out.println("Проверка качества с указанным ID не найден");
+                }
             } else {
-                System.out.println("Проверка качества с указанным ID не найден");
+                System.out.println("Введите ID для проверки качества продукта");
             }
-        } else {
-            // Обработка ситуации, если оба поля пусты
-            System.out.println("Введите ID для проверки качества продукта");
         }
     }
 
@@ -253,6 +245,6 @@ public class QualityAppController {
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LoginManager loginManager = new LoginManager(stage, applicationContext);
-        loginManager.showMainView(String.valueOf(sessionID));
+        loginManager.showMainView(userPassport);
     }
 }

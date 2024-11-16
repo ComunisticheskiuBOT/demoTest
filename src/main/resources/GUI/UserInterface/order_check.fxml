@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<StackPane prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demotest.app_controllers.OrderAppController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <StackPane>
+        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <children>
+                    <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
+                    <TextField fx:id="clientFilter" promptText="Фильтр по ID клиента"/>
+                    <TextField fx:id="projectFilter" promptText="Фильтр ID проекта"/>
+                    <ComboBox fx:id="statusFilter">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="ALL"/>
+                                <String fx:value="IN_PROCESS"/>
+                                <String fx:value="DELAYED"/>
+                                <String fx:value="APPROVED"/>
+                                <String fx:value="CANCELED"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </children>
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <children>
+                    <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
+                    <Button fx:id="updateOrderButton" mnemonicParsing="false" text="Обновить"
+                            onAction="#handleUpdateOrders"/>
+                    <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                            onAction="#handleBackButton"/>
+                </children>
+            </HBox>
+
+            <TableView fx:id="orderTable">
+                <columns>
+                    <TableColumn text="ID" fx:id="id"/>
+                    <TableColumn text="ID клиента" fx:id="client_id"/>
+                    <TableColumn text="ID проекта" fx:id="project_id"/>
+                    <TableColumn text="Дата заказа" fx:id="order_date"/>
+                    <TableColumn text="Дата исполнения" fx:id="completion_date"/>
+                    <TableColumn text="Статус заказа" fx:id="order_status"/>
+                    <TableColumn text="Описание заказа" fx:id="order_description"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </StackPane>
+</StackPane>

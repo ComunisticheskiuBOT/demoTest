@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<StackPane prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demotest.app_controllers.ProductAppController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <StackPane>
+        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <children>
+                    <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
+                    <TextField fx:id="productNameFilter" promptText="Фильтр по наименованию"/>
+                    <ComboBox fx:id="productTypeFilter">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="ALL"/>
+                                <String fx:value="COMPOSITE"/>
+                                <String fx:value="SOLID"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                </children>
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button fx:id="updateProductButton" mnemonicParsing="false" text="Обновить"
+                        onAction="#handleUpdateProducts"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
+            </HBox>
+
+            <TableView fx:id="productTable">
+                <columns>
+                    <TableColumn text="ID" fx:id="ProductId"/>
+                    <TableColumn text="ID проекта" fx:id="ProjectId"/>
+                    <TableColumn text="Наименование продукта" fx:id="ProductName"/>
+                    <TableColumn text="Тип продукта" fx:id="ProducTType"/>
+                    <TableColumn text="Кол-во" fx:id="Quantity"/>
+                    <TableColumn text="Масса" fx:id="Weight"/>
+                    <TableColumn text="Цена" fx:id="Cost"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </StackPane>
+</StackPane>

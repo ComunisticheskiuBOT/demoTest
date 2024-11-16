@@ -13,7 +13,9 @@ import org.example.demotest.dto.ServiceRequestProduct;
 import org.example.demotest.entities.Product;
 import org.example.demotest.entities.ProductType;
 import org.example.demotest.entities.Project;
+import org.example.demotest.entities.Role;
 import org.example.demotest.managers.LoginManager;
+import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
-import static org.example.demotest.app_controllers.LoginController.sessionID;
+import static org.example.demotest.app_controllers.EmployeeAppController.Numeric10Filter;
 
 @Controller
 public class ProductAppController {
@@ -49,23 +51,11 @@ public class ProductAppController {
     }
 
     private TextFormatter<String> createNumeric10Filter() {
-        return new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-
-            if (newText.length() > 10) {
-                return null;
-            }
-
-            if (newText.matches("\\d*")) {
-                return change;
-            }
-
-            return null;
-        });
+        return Numeric10Filter();
     }
 
-    private RestTemplate restTemplate = new RestTemplate();
-    private String url = "http://localhost:8080/product-api/v1/products";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String url = "http://localhost:8080/product-api/v1/products";
 
     //Таблица
     @FXML private TableView<Product> productTable;
@@ -95,26 +85,35 @@ public class ProductAppController {
     ObservableList<Product> observableProductsList = FXCollections.observableArrayList();
 
 
-    public void initialize() {
+    @Autowired
+    private EmployeeService employeeService;
+
+    private Long userPassport;
+    private Role userRole;
+
+    public void initialize(Long userPassport) {
+        this.userPassport = userPassport;
+        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+
         ProductId.setCellValueFactory(new PropertyValueFactory<>("ProductId"));
         ProjectId.setCellValueFactory(cellData -> {
             Project project = cellData.getValue().getProject();
             return new SimpleObjectProperty<>(project != null ? project.getProjectId() : null);
         });
-
-
         ProductName.setCellValueFactory(new PropertyValueFactory<>("ProductName"));
         ProducTType.setCellValueFactory(new PropertyValueFactory<>("ProductType"));
         Quantity.setCellValueFactory(new PropertyValueFactory<>("Quantity"));
         Weight.setCellValueFactory(new PropertyValueFactory<>("Weight"));
         Cost.setCellValueFactory(new PropertyValueFactory<>("Cost"));
-        productTypeField.getItems().setAll(ProductType.values());
 
-        productNameField.setTextFormatter(createAlphaFilter());
-        projectIdField.setTextFormatter(createNumericFilter());
-        quantityField.setTextFormatter(createNumericFilter());
-        weightField.setTextFormatter(createNumeric10Filter());
-        costField.setTextFormatter(createNumeric10Filter());
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            productTypeField.getItems().setAll(ProductType.values());
+            productNameField.setTextFormatter(createAlphaFilter());
+            projectIdField.setTextFormatter(createNumericFilter());
+            quantityField.setTextFormatter(createNumericFilter());
+            weightField.setTextFormatter(createNumeric10Filter());
+            costField.setTextFormatter(createNumeric10Filter());
+        }
 
         setupFilters();
         loadProducts();
@@ -125,13 +124,15 @@ public class ProductAppController {
 
     @FXML
     private void handleCleanButton(){
-        projectIdField.setText(null);
-        productNameField.setText(null);
-        deleteIdField.setText(null);
-        productTypeField.getSelectionModel().clearSelection();
-        quantityField.setText(null);
-        weightField.setText(null);
-        costField.setText(null);
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            projectIdField.setText(null);
+            productNameField.setText(null);
+            deleteIdField.setText(null);
+            productTypeField.getSelectionModel().clearSelection();
+            quantityField.setText(null);
+            weightField.setText(null);
+            costField.setText(null);
+        }
     }
 
     private void loadProducts() {
@@ -154,31 +155,30 @@ public class ProductAppController {
     @FXML
     private void handleAddProduct(ActionEvent event) {
         try {
-            // Проверка на существование ID сотрудника
+            if (userRole == org.example.demotest.entities.Role.ADMIN) {
+                Long projectIdValue = Long.valueOf(projectIdField.getText());
+                Project project = productService.getProjectById(projectIdValue);
 
-            Long projectIdValue = Long.valueOf(projectIdField.getText());
-            // Получите объект Project из службы, а не только его ID
-            Project project = productService.getProjectById(projectIdValue);
+                if (project == null) {
+                    System.out.println("Проект с указанным ID не найден.");
+                    return;
+                }
 
-            if (project == null) {
-                System.out.println("Проект с указанным ID не найден.");
-                return;
-            }
-
-            ServiceRequestProduct newProduct = ServiceRequestProduct.builder()
-                    .project(project)
-                    .productName(productNameField.getText())
-                    .productType(productTypeField.getValue())
-                    .quantity(Integer.valueOf(quantityField.getText()))
-                    .weight(Double.valueOf(weightField.getText()))
-                    .cost(Integer.valueOf(costField.getText()))
-                    .build();
-            System.out.println("Отправляемый продукт: " + newProduct);
-            Product productCreated = restTemplate.postForObject(url, newProduct, Product.class);
-            if (productCreated != null) {
-                observableProductsList.add(productCreated); // Используйте observableUserList
-                productTable.setItems(observableProductsList);
-                System.out.println("Продукт добавлен: " + productCreated);
+                ServiceRequestProduct newProduct = ServiceRequestProduct.builder()
+                        .project(project)
+                        .productName(productNameField.getText())
+                        .productType(productTypeField.getValue())
+                        .quantity(Integer.valueOf(quantityField.getText()))
+                        .weight(Double.valueOf(weightField.getText()))
+                        .cost(Integer.valueOf(costField.getText()))
+                        .build();
+                System.out.println("Отправляемый продукт: " + newProduct);
+                Product productCreated = restTemplate.postForObject(url, newProduct, Product.class);
+                if (productCreated != null) {
+                    observableProductsList.add(productCreated); // Используйте observableUserList
+                    productTable.setItems(observableProductsList);
+                    System.out.println("Продукт добавлен: " + productCreated);
+                }
             }
         } catch (Exception e) {
             // Логирование ошибки и/или уведомление пользователя
@@ -217,20 +217,22 @@ public class ProductAppController {
     private ProductService productService;
     @FXML
     private void handleDeleteProduct() {
-        Long idText = Long.valueOf(deleteIdField.getText());
+        if(userRole == org.example.demotest.entities.Role.ADMIN) {
+            Long idText = Long.valueOf(deleteIdField.getText());
 
-        if (idText != null) {
-            // Найдем пользователя по Id
-            Product product = productService.findProductById(idText);
-            if (product != null) {
-                productService.deleteProduct(product.getProductId());
-                loadProducts();
+            if (idText != null) {
+                // Найдем пользователя по Id
+                Product product = productService.findProductById(idText);
+                if (product != null) {
+                    productService.deleteProduct(product.getProductId());
+                    loadProducts();
+                } else {
+                    System.out.println("Продукт с указанным ID не найден");
+                }
             } else {
-                System.out.println("Продукт с указанным ID не найден");
+                // Обработка ситуации, если оба поля пусты
+                System.out.println("Введите ID для удаления продукта");
             }
-        } else {
-            // Обработка ситуации, если оба поля пусты
-            System.out.println("Введите ID для удаления продукта");
         }
     }
 
@@ -238,6 +240,6 @@ public class ProductAppController {
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LoginManager loginManager = new LoginManager(stage, applicationContext);
-        loginManager.showMainView(String.valueOf(sessionID));
+        loginManager.showMainView(userPassport);
     }
 }

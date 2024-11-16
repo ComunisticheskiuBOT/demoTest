@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestOrder;
 import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
+import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.example.demotest.app_controllers.LoginController.sessionID;
+import static org.example.demotest.app_controllers.EmployeeAppController.DateFilter;
+
 
 @Controller
 public class OrderAppController {
@@ -40,23 +42,7 @@ public class OrderAppController {
     }
 
     private TextFormatter<String> createDateFilter() {
-        return new TextFormatter<>(change -> {
-            String newText = change.getControlNewText();
-
-            if (newText.length() > 10) {
-                return null;
-            }
-
-            if (newText.matches("^\\d{0,2}$") ||             // День
-                    newText.matches("^\\d{2}-$") ||              // День-
-                    newText.matches("^\\d{2}-(0[1-9]?|1[0-2]?)$") || // День-месяц
-                    newText.matches("^\\d{2}-\\d{2}-$") ||       // День-месяц-
-                    newText.matches("^\\d{2}-\\d{2}-\\d{0,4}$")) {  // День-месяц-год
-                return change;
-            }
-
-            return null;
-        });
+        return DateFilter();
     }
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -91,8 +77,15 @@ public class OrderAppController {
 
     ObservableList<Order> observableOrderList = FXCollections.observableArrayList();
 
+    @Autowired
+    private EmployeeService employeeService;
 
-    public void initialize() {
+    private Long userPassport;
+    private Role userRole;
+
+    public void initialize(Long userPassport) {
+        this.userPassport = userPassport;
+        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
         id.setCellValueFactory(new PropertyValueFactory<>("orderId"));
 
         client_id.setCellValueFactory(cellData -> {
@@ -109,12 +102,15 @@ public class OrderAppController {
         completion_date.setCellValueFactory(new PropertyValueFactory<>("dateOfExecution"));
         order_status.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
         order_description.setCellValueFactory(new PropertyValueFactory<>("orderDescription"));
-        statusComboBoxField.getItems().setAll(org.example.demotest.entities.OrderStatus.values());
 
-        clientIdField.setTextFormatter(createDateFilter());
-        projectIdField.setTextFormatter(createDateFilter());
-        dateOfOrderField.setTextFormatter(createDateFilter());
-        dateOfExecutionField.setTextFormatter(createDateFilter());
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            statusComboBoxField.getItems().setAll(org.example.demotest.entities.OrderStatus.values());
+            statusComboBoxField.getItems().setAll(org.example.demotest.entities.OrderStatus.values());
+            clientIdField.setTextFormatter(createDateFilter());
+            projectIdField.setTextFormatter(createDateFilter());
+            dateOfOrderField.setTextFormatter(createDateFilter());
+            dateOfExecutionField.setTextFormatter(createDateFilter());
+        }
 
         setupFilters();
         loadOrders();
@@ -127,12 +123,14 @@ public class OrderAppController {
 
     @FXML
     private void handleCleanButton(){
-        clientIdField.setText(null);
-        projectIdField.setText(null);
-        dateOfOrderField.setText(null);
-        dateOfExecutionField.setText(null);
-        statusComboBoxField.getSelectionModel().clearSelection();
-        orderDescription.setText(null);
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            clientIdField.setText(null);
+            projectIdField.setText(null);
+            dateOfOrderField.setText(null);
+            dateOfExecutionField.setText(null);
+            statusComboBoxField.getSelectionModel().clearSelection();
+            orderDescription.setText(null);
+        }
     }
 
     private void loadOrders() {
@@ -152,39 +150,43 @@ public class OrderAppController {
 
     @FXML
     private void handleAddOrder(ActionEvent event) {
+
         try {
-            Long clientIdValue = Long.valueOf(clientIdField.getText());
-            Client client = orderService.getClientById(clientIdValue);
+            if (userRole == org.example.demotest.entities.Role.ADMIN) {
 
-            if (client == null) {
-                System.out.println("Клиент с указанным ID не найден.");
-                return;
-            }
+                Long clientIdValue = Long.valueOf(clientIdField.getText());
+                Client client = orderService.getClientById(clientIdValue);
 
-            Long projectIdValue = Long.valueOf(projectIdField.getText());
-            Project project = orderService.getProjectById(projectIdValue);
+                if (client == null) {
+                    System.out.println("Клиент с указанным ID не найден.");
+                    return;
+                }
 
-            if (project == null) {
-                System.out.println("Проект с указанным ID не найден.");
-                return;
-            }
+                Long projectIdValue = Long.valueOf(projectIdField.getText());
+                Project project = orderService.getProjectById(projectIdValue);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            Date parsedDateOfOrder = sdf.parse(dateOfOrderField.getText());
-            Date parsedDateExecution = sdf.parse(dateOfExecutionField.getText());
-            ServiceRequestOrder newOrder = ServiceRequestOrder.builder()
-                    .client(client)
-                    .project(project)
-                    .dateOfOrder(parsedDateOfOrder)
-                    .dateOfExecution(parsedDateExecution)
-                    .orderStatus(statusComboBoxField.getValue())
-                    .orderDescription(orderDescription.getText())
-                    .build();
-            Order orderCreated = restTemplate.postForObject(url, newOrder, Order.class);
-            if (orderCreated != null) {
-                observableOrderList.add(orderCreated); // Используйте observableUserList
-                orderTable.setItems(observableOrderList);
-                System.out.println("Заказ добавлен: " + orderCreated);
+                if (project == null) {
+                    System.out.println("Проект с указанным ID не найден.");
+                    return;
+                }
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date parsedDateOfOrder = sdf.parse(dateOfOrderField.getText());
+                Date parsedDateExecution = sdf.parse(dateOfExecutionField.getText());
+                ServiceRequestOrder newOrder = ServiceRequestOrder.builder()
+                        .client(client)
+                        .project(project)
+                        .dateOfOrder(parsedDateOfOrder)
+                        .dateOfExecution(parsedDateExecution)
+                        .orderStatus(statusComboBoxField.getValue())
+                        .orderDescription(orderDescription.getText())
+                        .build();
+                Order orderCreated = restTemplate.postForObject(url, newOrder, Order.class);
+                if (orderCreated != null) {
+                    observableOrderList.add(orderCreated); // Используйте observableUserList
+                    orderTable.setItems(observableOrderList);
+                    System.out.println("Заказ добавлен: " + orderCreated);
+                }
             }
         } catch (Exception e) {
             // Логирование ошибки и/или уведомление пользователя
@@ -222,20 +224,23 @@ public class OrderAppController {
 
     @FXML
     private void handleDeleteOrder() {
-        Long idText = Long.valueOf(deleteIdField.getText());
+        if (userRole == org.example.demotest.entities.Role.ADMIN) {
 
-        if (idText != null) {
-            // Найдем отдел по Id
-            Order order = orderService.findOrderById(idText);
-            if (order != null) {
-                orderService.deleteOrder(order.getOrderId());
-                loadOrders();
+            Long idText = Long.valueOf(deleteIdField.getText());
+
+            if (idText != null) {
+                // Найдем отдел по Id
+                Order order = orderService.findOrderById(idText);
+                if (order != null) {
+                    orderService.deleteOrder(order.getOrderId());
+                    loadOrders();
+                } else {
+                    System.out.println("Заказ с указанным ID не найден");
+                }
             } else {
-                System.out.println("Заказ с указанным ID не найден");
+                // Обработка ситуации, если оба поля пусты
+                System.out.println("Введите ID для удаления заказа");
             }
-        } else {
-            // Обработка ситуации, если оба поля пусты
-            System.out.println("Введите ID для удаления заказа");
         }
     }
 
@@ -243,6 +248,6 @@ public class OrderAppController {
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         LoginManager loginManager = new LoginManager(stage, applicationContext);
-        loginManager.showMainView(String.valueOf(sessionID));
+        loginManager.showMainView(userPassport);
     }
 }

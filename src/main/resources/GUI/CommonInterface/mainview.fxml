@@ -10,12 +10,12 @@
 
             <Label text="Список таблиц" style="-fx-font-size: 16; -fx-font-weight: bold;" />
             <VBox  fx:id="buttonContainer"  alignment="CENTER" StackPane.alignment="CENTER">
-                <Button id="workersButton" fx:id="workersButton" text="Работники" prefWidth="150" prefHeight="40" />
-                <Button id="ordersButton" fx:id="ordersButton" text="Заказы" prefWidth="150" prefHeight="40"  />
+                <Button id="workersButton" fx:id="workersButton" text="Работники" prefWidth="150" prefHeight="40"   />
+                <Button id="ordersButton" fx:id="ordersButton" text="Заказы" prefWidth="150" prefHeight="40"   />
                 <Button id="clientsButton" fx:id="clientButton" text="Клиенты" prefWidth="150" prefHeight="40"  />
                 <Button id="departmentButton" fx:id="departmentButton" text="Отделы" prefWidth="150" prefHeight="40"  />
-                <Button id="projectsButton" fx:id="projectsButton" text="Проекты" prefWidth="150" prefHeight="40"  />
-                <Button id="productsButton" fx:id="productsButton" text="Продукты" prefWidth="150" prefHeight="40"  />
+                <Button id="projectsButton" fx:id="projectsButton" text="Проекты" prefWidth="150" prefHeight="40" />
+                <Button id="productsButton" fx:id="productsButton" text="Продукты" prefWidth="150" prefHeight="40" />
                 <Button id="qualitiesButton" fx:id="qualitiesButton" text="Качество" prefWidth="150" prefHeight="40" />
                 <Button id="storagesButton" fx:id="storagesButton" text="Склады" prefWidth="150" prefHeight="40" />
             </VBox>
@@ -34,7 +34,7 @@
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
             </GridPane>
-            <Button id="loginButton" fx:id="logoutButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Logout" StackPane.alignment="CENTER_RIGHT"  />
+            <Button id="loginButton" fx:id="logoutButton" alignment="CENTER" defaultButton="true" mnemonicParsing="false" text="Разлогиниться" StackPane.alignment="CENTER_RIGHT"  />
 
         </VBox>
     </children>

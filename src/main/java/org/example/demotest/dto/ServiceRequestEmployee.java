@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demotest.entities.Department;
+import org.example.demotest.entities.Role;
 import org.example.demotest.entities.Status;
 
 import java.io.Serial;
@@ -33,6 +34,7 @@ public class ServiceRequestEmployee implements Serializable {
     private Date terminationDate;
     private Department department;
     private String position;
+    private Role role;
     private Status status;
     private Integer salary;
     private String comments;

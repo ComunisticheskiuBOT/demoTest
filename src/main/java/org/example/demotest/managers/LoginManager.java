@@ -10,16 +10,16 @@ import org.example.demotest.app_controllers.MainViewController;
 import org.springframework.context.ApplicationContext;
 
 public class LoginManager {
-    private Stage stage;
-    private ApplicationContext applicationContext;
+    public Stage stage;
+    public ApplicationContext applicationContext;
 
     public LoginManager(Stage stage, ApplicationContext applicationContext) {
         this.stage = stage;
         this.applicationContext = applicationContext;
     }
 
-    public void authenticated(String sessionID) {
-        showMainView(sessionID);
+    public void authenticated(Long userPassport) {
+        showMainView(userPassport);
     }
 
     public void logout() {
@@ -28,7 +28,7 @@ public class LoginManager {
 
     public void showLoginScreen() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/UI/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/CommonInterface/login.fxml"));
             loader.setControllerFactory(applicationContext::getBean);
             Parent root = loader.load();
 
@@ -52,10 +52,10 @@ public class LoginManager {
         }
     }
 
-    public void showMainView(String sessionID) {
+    public void showMainView(Long userPassport) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/UI/mainview.fxml")
+                    getClass().getResource("/GUI/CommonInterface/mainview.fxml")
             );
 
             Parent root = loader.load();
@@ -66,16 +66,15 @@ public class LoginManager {
 
             MainViewController controller = loader.getController();
             loader.setControllerFactory(applicationContext::getBean);
-
-            controller.initSessionID(this, sessionID);
-            controller.initWorkersWindow(new MainViewManager(stage, applicationContext));
-            controller.initOrdersWindow(new MainViewManager(stage, applicationContext));
-            controller.initDepartmentsWindow(new MainViewManager(stage, applicationContext));
-            controller.initClientsWindow(new MainViewManager(stage, applicationContext));
-            controller.initProjectsWindow(new MainViewManager(stage, applicationContext));
-            controller.initProductsWindow(new MainViewManager(stage, applicationContext));
-            controller.initQualitiesWindow(new MainViewManager(stage, applicationContext));
-            controller.initStoragesWindow(new MainViewManager(stage, applicationContext));
+            controller.initSessionLogin(this, userPassport, applicationContext);
+            controller.initWorkersWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initOrdersWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initDepartmentsWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initClientsWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initProjectsWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initProductsWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initQualitiesWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
+            controller.initStoragesWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
 
         } catch (IOException ex) {
             Logger.getLogger(LoginManager.class.getName()).log(Level.SEVERE, null, ex);
