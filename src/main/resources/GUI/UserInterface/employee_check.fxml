@@ -48,7 +48,7 @@
                         onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="employeeTable">
+            <TableView fx:id="employeeTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="id"/>
                     <TableColumn text="Фамилия" fx:id="second_name"/>

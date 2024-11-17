@@ -1,7 +1,6 @@
 package org.example.demotest.app_controllers;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -32,11 +31,7 @@ public class ConnectorController {
 
 
     public void initLoginWindow(final ConnectorManager connectorManager) {
-        toLogin.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                connectorManager.login();
-            }
-        });
+        toLogin.setOnAction(event -> connectorManager.login());
     }
 
     @FXML

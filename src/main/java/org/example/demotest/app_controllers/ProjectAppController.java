@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestProject;
 import org.example.demotest.entities.MaterialType;
@@ -15,23 +16,32 @@ import org.example.demotest.entities.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProjectService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class ProjectAppController {
+    private final Logger logger = Logger.getLogger(ProjectAppController.class.getName());
+    private final ApplicationContext applicationContext;
+    private final EmployeeService employeeService;
+    private final ProjectService projectService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
+    public ProjectAppController(ApplicationContext applicationContext, EmployeeService employeeService, ProjectService projectService){
+        this.projectService = projectService;
+        this.employeeService = employeeService;
+        this.applicationContext = applicationContext;
+    }
     private TextFormatter<String> createAlphaFilter() {
         return new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("[a-zA-Zа-яА-ЯёЁ]+")) {
+            String newText = change.getControlNewText();
+            if (newText.matches("[a-zA-Zа-яА-Я]*")) {
                 return change;
             }
             return null;
@@ -40,7 +50,8 @@ public class ProjectAppController {
 
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d*")) {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty() || newText.matches("\\d*")) {
                 return change;
             }
             return null;
@@ -59,10 +70,9 @@ public class ProjectAppController {
                 String remainingText = newText.substring(2);
 
                 if (remainingText.matches("\\d*[MHDY]?")) {
-                    return change; // Разрешаем ввод
+                    return change;
                 }
             } else {
-                // Если строка не начинается с "PT", добавляем его
                 if (newText.matches("\\d+")) {
                     String formattedText = "PT" + newText;
 
@@ -75,12 +85,9 @@ public class ProjectAppController {
             return null;
         });
     }
-
-
-
     
-    private RestTemplate restTemplate = new RestTemplate();
-    private String url = "http://localhost:8080/project-api/v1/projects";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String url = "http://localhost:8080/project-api/v1/projects";
 
     //Таблица
     @FXML private TableView<Project> projectTable;
@@ -110,16 +117,15 @@ public class ProjectAppController {
     @FXML private ComboBox<String> materialTypeFilter;
     ObservableList<Project> observableProjectsList = FXCollections.observableArrayList();
 
-
-    @Autowired
-    private EmployeeService employeeService;
-
     private Long userPassport;
     private Role userRole;
 
     public void initialize(Long userPassport) {
         this.userPassport = userPassport;
-        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+        this.userRole = employeeService
+                .findEmployeeByPassportNumber(userPassport)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник с данным номером паспорта не найден"))
+                .getRole();
 
         ProjectId.setCellValueFactory(new PropertyValueFactory<>("ProjectId"));
         EngineerId.setCellValueFactory(new PropertyValueFactory<>("EngineerId"));
@@ -149,13 +155,12 @@ public class ProjectAppController {
     @FXML
     private void handleCleanButton(){
         if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            engineerIdField.setText(null);
-            projectNameField.setText(null);
-            drawingField.setText(null);
-            deleteIdField.setText(null);
+            engineerIdField.setText("");
+            projectNameField.setText("");
+            drawingField.setText("");
             materialTypeField.getSelectionModel().clearSelection();
-            expectedTimeField.setText(null);
-            projectDescriptionField.setText(null);
+            expectedTimeField.setText("");
+            projectDescriptionField.setText("");
         }
     }
 
@@ -169,8 +174,7 @@ public class ProjectAppController {
                 projectTable.setItems(FXCollections.emptyObservableList());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при загрузке проектов: " + e.getMessage());
+            logger.log(Level.WARNING,"Ошибка при загрузке проектов: " + e.getMessage());
         }
     }
 
@@ -202,13 +206,79 @@ public class ProjectAppController {
                 }
             }
         } catch (Exception e) {
-            // Логирование ошибки и/или уведомление пользователя
-            e.printStackTrace();
-
-            System.out.println("Ошибка при добавлении проекта: " + e.getMessage());
+            logger.log(Level.WARNING,"Ошибка при добавлении проекта: " + e.getMessage());
         }
     }
 
+    private Project selectedProject;
+
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        selectedProject = projectTable.getSelectionModel().getSelectedItem();
+        try {
+            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                if (selectedProject != null) {
+                    engineerIdField.setText(String.valueOf(selectedProject.getEngineerId()));
+                    projectNameField.setText(selectedProject.getProjectName());
+                    drawingField.setText(selectedProject.getDrawing());
+                    projectDescriptionField.setText(selectedProject.getProjectDescription());
+                    expectedTimeField.setText(String.valueOf(selectedProject.getExpectedTime()));
+                    materialTypeField.setValue(selectedProject.getMaterialType());
+                }
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например, длительность): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных сотрудника: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditProject(ActionEvent event) {
+        if (selectedProject == null) {
+            System.out.println("Не выбран проект для изменения.");
+            return;
+        }
+
+        try {
+            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                ServiceRequestProject updatedProject = new ServiceRequestProject();
+
+                if (!engineerIdField.getText().isEmpty()) {
+                    updatedProject.setEngineerId(Long.valueOf(engineerIdField.getText()));
+                }
+                if (!projectNameField.getText().isEmpty()) {
+                    updatedProject.setProjectDescription(projectNameField.getText());
+                }
+                if (!drawingField.getText().isEmpty()) {
+                    updatedProject.setDrawing(drawingField.getText());
+                }
+                if (!projectDescriptionField.getText().isEmpty()) {
+                    updatedProject.setProjectDescription(projectDescriptionField.getText());
+                }
+                if (!expectedTimeField.getText().isEmpty()) {
+                    updatedProject.setExpectedTime(Duration.parse(expectedTimeField.getText()));
+                }
+                if (materialTypeField.getValue() != null) {
+                    updatedProject.setMaterialType(materialTypeField.getValue());
+                }
+
+                Optional<Project> updated = projectService.updatedProject(selectedProject.getProjectId(), updatedProject);
+
+                if (updated.isPresent()) {
+                    System.out.println("Проект успешно обновлен: " + updated.get().getProjectName());
+                } else {
+                    System.out.println("Проект с ID " + selectedProject.getProjectId() + " не найден.");
+                }
+
+                loadProjects();
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например длительность): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных проекта: " + e.getMessage());
+        }
+    }
     private void setupFilters() {
         idFilter.setTextFormatter(createNumericFilter());
 
@@ -231,32 +301,22 @@ public class ProjectAppController {
             boolean matchesDrawing = drawing.isEmpty() || project.getDrawing().toLowerCase().contains(drawing);
             boolean matchesMaterialTypeFilterValue = materialTypeFilterValue == null || "ALL".equals(materialTypeFilterValue) || project.getMaterialType().name().equalsIgnoreCase(materialTypeFilterValue);
 
-            // Возвращаем результат проверки всех фильтров
             return matchesId && matchesProjectName && matchesDrawing && matchesMaterialTypeFilterValue;
         }));
     }
 
-
-    @Autowired
-    private ProjectService projectService;
     @FXML
     private void handleDeleteProject() {
         if(userRole == org.example.demotest.entities.Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 
-            if (idText != null) {
-                // Найдем пользователя по Id
-                Project project = projectService.findProjectById(idText);
-                if (project != null) {
-                    projectService.deleteProject(project.getProjectId());
-                    loadProjects();
-                } else {
-                    System.out.println("Проект с указанным ID не найден");
-                }
+            Project project = projectService.findProjectById(idText);
+            if (project != null) {
+                projectService.deleteProject(project.getProjectId());
+                loadProjects();
             } else {
-                // Обработка ситуации, если оба поля пусты
-                System.out.println("Введите ID для удаления проекта");
+                System.out.println("Проект с указанным ID не найден");
             }
         }
     }

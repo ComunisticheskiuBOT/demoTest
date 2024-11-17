@@ -8,14 +8,15 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 import org.example.demotest.dto.ServiceRequestQuality;
 import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
+import org.example.demotest.services.ProductService;
 import org.example.demotest.services.QualityService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
@@ -24,14 +25,26 @@ import java.text.SimpleDateFormat;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.example.demotest.app_controllers.EmployeeAppController.DateFilter;
 
 @Controller
 public class QualityAppController {
+    private final Logger logger = Logger.getLogger(QualityAppController.class.getName());
+    private final ApplicationContext applicationContext;
+    private final EmployeeService employeeService;
+    private final ProductService productService;
+    private final QualityService qualityService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    public QualityAppController(EmployeeService employeeService, ProductService productService, QualityService qualityService, ApplicationContext applicationContext){
+        this.employeeService = employeeService;
+        this.qualityService = qualityService;
+        this.productService = productService;
+        this.applicationContext = applicationContext;
+    }
 
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
@@ -46,8 +59,8 @@ public class QualityAppController {
         return DateFilter();
     }
 
-    private RestTemplate restTemplate = new RestTemplate();
-    private String url = "http://localhost:8080/quality-api/v1/qualities";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String url = "http://localhost:8080/quality-api/v1/qualities";
 
     //Таблица
     @FXML private TableView<Quality> qualityTable;
@@ -76,15 +89,15 @@ public class QualityAppController {
     @FXML private ComboBox<String> resultTypeFilter;
     ObservableList<Quality> observableQualitiesList = FXCollections.observableArrayList();
 
-    @Autowired
-    private EmployeeService employeeService;
-
     private Long userPassport;
     private Role userRole;
 
     public void initialize(Long userPassport) {
         this.userPassport = userPassport;
-        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+        this.userRole = employeeService
+                .findEmployeeByPassportNumber(userPassport)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник с данным номером паспорта не найден"))
+                .getRole();
 
         QualityId.setCellValueFactory(new PropertyValueFactory<>("QualityId"));
         InspectorId.setCellValueFactory(cellData -> {
@@ -119,7 +132,7 @@ public class QualityAppController {
             inspectorIdField.setText(null);
             productIdField.setText(null);
             inspectionDateField.setText(null);
-            deleteIdField.setText(null);
+            //deleteIdField.setText(null);
             resultTypeField.getSelectionModel().clearSelection();
             commentsTimeField.setText(null);
         }
@@ -135,12 +148,9 @@ public class QualityAppController {
                 qualityTable.setItems(FXCollections.emptyObservableList());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при загрузке проверок качества: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при загрузке проверок качества: " + e.getMessage());
         }
     }
-
-
 
     @FXML
     private void handleAddQuality(ActionEvent event) {
@@ -186,10 +196,72 @@ public class QualityAppController {
                 }
             }
         } catch (Exception e) {
-            // Логирование ошибки и/или уведомление пользователя
-            e.printStackTrace();
+            logger.log(Level.SEVERE,"Ошибка при добавлении проверки качества продукта: " + e.getMessage());
+        }
+    }
 
-            System.out.println("Ошибка при добавлении проверки качества продукта: " + e.getMessage());
+    private Quality selectedQuality;
+
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        selectedQuality = qualityTable.getSelectionModel().getSelectedItem();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                if (selectedQuality != null) {
+                    productIdField.setText(String.valueOf(selectedQuality.getProduct().getProductId()));
+                    inspectorIdField.setText(String.valueOf(selectedQuality.getInspector().getId()));
+                    commentsTimeField.setText(selectedQuality.getComments());
+                    inspectionDateField.setText(sdf.format(selectedQuality.getInspectionDate()));
+                    resultTypeField.setValue(selectedQuality.getResult());
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных качества: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditQuality(ActionEvent event) {
+        if (selectedQuality == null) {
+            System.out.println("Не выбран качества для изменения.");
+            return;
+        }
+
+        try {
+            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                ServiceRequestQuality updatedQuality = new ServiceRequestQuality();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date inspectionDate = sdf.parse(inspectionDateField.getText());
+
+                if (!productIdField.getText().isEmpty()) {
+                    updatedQuality.setProduct(productService.findProductById(Long.valueOf(productIdField.getText())));
+                }
+                if (!inspectorIdField.getText().isEmpty()) {
+                    updatedQuality.setInspector(employeeService.findEmployeeById(Long.valueOf(inspectorIdField.getText())));
+                }
+                if (!commentsTimeField.getText().isEmpty()) {
+                    updatedQuality.setComments(commentsTimeField.getText());
+                }
+                if (inspectionDateField.getText() != null) {
+                    updatedQuality.setInspectionDate(inspectionDate);
+                }
+                if (resultTypeField.getValue() != null) {
+                    updatedQuality.setResult(resultTypeField.getValue());
+                }
+
+                Optional<Quality> updated = qualityService.updatedQuality(selectedQuality.getQualityId(), updatedQuality);
+
+                if (updated.isPresent()) {
+                    System.out.println("Качество успешно обновлено: " + updated.get().getQualityId());
+                } else {
+                    System.out.println("Качество с ID " + selectedQuality.getQualityId() + " не найдено.");
+                }
+
+                loadQualities();
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных качества: " + e.getMessage());
         }
     }
 
@@ -218,25 +290,18 @@ public class QualityAppController {
         }));
     }
 
-
-    @Autowired
-    private QualityService qualityService;
     @FXML
     private void handleDeleteQuality() {
         if (userRole == org.example.demotest.entities.Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 
-            if (idText != null) {
-                Quality quality = qualityService.findQualityById(idText);
-                if (quality != null) {
-                    qualityService.deleteQuality(quality.getQualityId());
-                    loadQualities();
-                } else {
-                    System.out.println("Проверка качества с указанным ID не найден");
-                }
+            Quality quality = qualityService.findQualityById(idText);
+            if (quality != null) {
+                qualityService.deleteQuality(quality.getQualityId());
+                loadQualities();
             } else {
-                System.out.println("Введите ID для проверки качества продукта");
+                System.out.println("Проверка качества с указанным ID не найден");
             }
         }
     }

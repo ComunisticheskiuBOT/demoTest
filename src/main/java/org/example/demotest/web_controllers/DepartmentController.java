@@ -45,7 +45,7 @@ public class DepartmentController {
 
     @PutMapping("/department-api/v1/departments/{id}")
     public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody ServiceRequestDepartment updatedDepartment) {
-        return departmentService.updatedClient(id, updatedDepartment)
+        return departmentService.updatedDepartment(id, updatedDepartment)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

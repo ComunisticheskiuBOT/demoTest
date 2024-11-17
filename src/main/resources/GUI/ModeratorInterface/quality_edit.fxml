@@ -15,13 +15,12 @@
     <StackPane>
         <VBox spacing="10.0" alignment="BOTTOM_CENTER">
 
-            <GridPane hgap="15" vgap="10">
+            <GridPane>
                 <columnConstraints>
                     <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
                     <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER"/>
                     <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
                     <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
                     <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
@@ -48,15 +47,6 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addQualityButton" mnemonicParsing="false" text="Добавить качество"
-                        onAction="#handleAddQuality"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="inspectorIdFilter" promptText="Фильтр по ID инспектора"/>
                 <TextField fx:id="productIdFilter" promptText="Фильтр по ID продукции"/>
@@ -72,14 +62,17 @@
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteQualityButton" mnemonicParsing="false" text="Удалить проверку качества"
-                        onAction="#handleDeleteQuality"/>
+                <Button fx:id="editQualityButton" mnemonicParsing="false" text="Изменить"
+                        onAction="#handleEditQuality"/>
                 <Button fx:id="updateQualityButton" mnemonicParsing="false" text="Обновить"
                         onAction="#handleUpdateQualities"/>
+                <Button fx:id="cleanQualityButton" mnemonicParsing="false" text="Очистить"
+                        onAction="#handleCleanButton"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="qualityTable">
+            <TableView fx:id="qualityTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="QualityId"/>
                     <TableColumn text="ID сотрудника-инспектора" fx:id="InspectorId"/>
