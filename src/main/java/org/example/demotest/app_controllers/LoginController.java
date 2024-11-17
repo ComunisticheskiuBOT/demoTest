@@ -1,6 +1,5 @@
 package org.example.demotest.app_controllers;
 
-import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.demotest.managers.ConnectorManager;
@@ -24,24 +23,16 @@ public class LoginController {
     public void initialize() {}
 
     public void initManager(final LoginManager loginManager) {
-        loginButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                if(authorize()) {
-                    loginManager.authenticated(Long.parseLong(user.getText()));
-
-                }
+        loginButton.setOnAction(event -> {
+            if(authorize()) {
+                loginManager.authenticated(Long.parseLong(user.getText()));
             }
         });
 
     }
 
     public void initConnected(final ConnectorManager connectorManager) {
-        connectButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                connectorManager.connected();
-            }
-        });
-
+        connectButton.setOnAction(event -> connectorManager.connected());
     }
 
     public boolean authorize() {

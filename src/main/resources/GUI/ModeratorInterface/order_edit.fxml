@@ -52,15 +52,6 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addOrderButton" mnemonicParsing="false" text="Добавить заказ"
-                        onAction="#handleAddOrder"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="clientFilter" promptText="Фильтр по ID клиента"/>
                 <TextField fx:id="projectFilter" promptText="Фильтр ID проекта"/>
@@ -78,14 +69,17 @@
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteOrderButton" mnemonicParsing="false" text="Удалить заказ"
-                        onAction="#handleDeleteOrder"/>
+                <Button fx:id="editOrderButton" mnemonicParsing="false" text="Изменить"
+                        onAction="#handleEditOrder"/>
                 <Button fx:id="updateOrderButton" mnemonicParsing="false" text="Обновить"
                         onAction="#handleUpdateOrders"/>
+                <Button fx:id="cleanOrderButton" mnemonicParsing="false" text="Очистить"
+                        onAction="#handleCleanButton"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="orderTable">
+            <TableView fx:id="orderTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="id"/>
                     <TableColumn text="ID клиента" fx:id="client_id"/>

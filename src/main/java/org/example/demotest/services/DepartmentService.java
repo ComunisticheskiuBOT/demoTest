@@ -50,7 +50,7 @@ public class DepartmentService {
         departmentRepository.deleteById(id);
     }
 
-    public Optional<Department> updatedClient(Long id, ServiceRequestDepartment updatedDepartment) {
+    public Optional<Department> updatedDepartment(Long id, ServiceRequestDepartment updatedDepartment) {
         return departmentRepository.findById(id).map(department -> {
             if (updatedDepartment.getDepartmentName() != null) {
                 department.setDepartmentName(updatedDepartment.getDepartmentName());

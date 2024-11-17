@@ -1,6 +1,5 @@
 package org.example.demotest.app_controllers;
 
-import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.demotest.entities.Employee;
@@ -39,66 +38,34 @@ public class MainViewController {
     }
 
     public void initWorkersWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        workersButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.employees(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        workersButton.setOnAction(event -> mainViewManager.employees(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initOrdersWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        ordersButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.orders(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        ordersButton.setOnAction(event -> mainViewManager.orders(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initDepartmentsWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        departmentButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.departments(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        departmentButton.setOnAction(event -> mainViewManager.departments(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initClientsWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        clientButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.clients(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        clientButton.setOnAction(event -> mainViewManager.clients(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initProjectsWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        projectsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.projects(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        projectsButton.setOnAction(event -> mainViewManager.projects(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initQualitiesWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        qualitiesButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.qualities(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        qualitiesButton.setOnAction(event -> mainViewManager.qualities(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initProductsWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        productsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.products(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        productsButton.setOnAction(event -> mainViewManager.products(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 
     public void initStoragesWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
-        storagesButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-                mainViewManager.storages(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole());
-            }
-        });
+        storagesButton.setOnAction(event -> mainViewManager.storages(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
 }

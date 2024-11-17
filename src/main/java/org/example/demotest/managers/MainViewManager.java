@@ -50,7 +50,7 @@ public class MainViewManager {
             }
             else if(role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/employee_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/employee_edit.fxml")
                 );
                 employeeWindow(userPassport, loader, 800);
             }
@@ -91,7 +91,7 @@ public class MainViewManager {
             }
             else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/client_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/client_edit.fxml")
                 );
                 clientWindow(loader, userPassport);
             }
@@ -110,7 +110,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 600, 600);
         stage.setTitle("Панель управления клиентами");
         stage.setScene(scene);
         stage.show();
@@ -131,7 +131,7 @@ public class MainViewManager {
             }
             else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/department_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/department_edit.fxml")
                 );
                 departmentWindow(loader, userPassport);
             }
@@ -150,7 +150,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 500, 500);
+        Scene scene = new Scene(root, 500, 575);
         stage.setTitle("Панель управления отделами");
         stage.setScene(scene);
         stage.show();
@@ -170,7 +170,7 @@ public class MainViewManager {
             }
             else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/order_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/order_edit.fxml")
                 );
                 orderWindow(loader, userPassport);
             }
@@ -189,7 +189,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 600, 600);
         stage.setTitle("Панель управления заказами");
         stage.setScene(scene);
         stage.show();
@@ -208,7 +208,7 @@ public class MainViewManager {
                 projectWindow(loader, userPassport);
             } else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/project_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/project_edit.fxml")
                 );
                 projectWindow(loader, userPassport);
             } else if (role == Role.USER) {
@@ -227,7 +227,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 600, 600);
         stage.setTitle("Панель управления проектами");
         stage.setScene(scene);
         stage.show();
@@ -246,7 +246,7 @@ public class MainViewManager {
                 productWindow(userPassport, loader);
             } else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/product_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/product_edit.fxml")
                 );
                 productWindow(userPassport, loader);
             }
@@ -265,7 +265,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 600, 600);
         stage.setTitle("Панель управления продуктами");
         stage.setScene(scene);
         stage.show();
@@ -284,7 +284,7 @@ public class MainViewManager {
                 storageWindow(userPassport, loader);
             } else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/storage_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/storage_edit.fxml")
                 );
                 storageWindow(userPassport, loader);
 
@@ -323,7 +323,7 @@ public class MainViewManager {
             }
             else if (role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/GUI/ModeratorInterface/quality_add.fxml")
+                        getClass().getResource("/GUI/ModeratorInterface/quality_edit.fxml")
                 );
                 qualityWindow(userPassport, loader);
             }
@@ -342,7 +342,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 600, 600);
         stage.setTitle("Панель управления качеством");
         stage.setScene(scene);
         stage.show();

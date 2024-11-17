@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestDepartment;
 import org.example.demotest.entities.Department;
@@ -14,18 +15,30 @@ import org.example.demotest.entities.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.DepartmentService;
 import org.example.demotest.services.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class DepartmentAppController {
+    private final Logger logger = Logger.getLogger(DepartmentAppController.class.getName());
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final EmployeeService employeeService;
+
+    private final ApplicationContext applicationContext;
+
+    private final DepartmentService departmentService;
+
+    public DepartmentAppController(ApplicationContext applicationContext, EmployeeService employeeService, DepartmentService departmentService){
+        this.employeeService = employeeService;
+        this.departmentService = departmentService;
+        this.applicationContext = applicationContext;
+    }
 
     private TextFormatter<String> createAlphaFilter() {
         return new TextFormatter<>(change -> {
@@ -39,44 +52,42 @@ public class DepartmentAppController {
 
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d*")) {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty() || newText.matches("\\d*")) {
                 return change;
             }
             return null;
         });
     }
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final String url = "http://localhost:8080/department-api/v1/departments";
 
     //Таблица
     @FXML private TableView<Department> departmentTable;
     @FXML private TableColumn<Department, Long> DepartmentId;
-    @FXML private TableColumn<Department, String> DepartmentName;
-    @FXML private TableColumn<Department, String> Location;
-    @FXML private TableColumn<Department, String> Description;
+    @FXML private TableColumn<Department, String> DepartmentName, Location, Description;
 
     //Поля для создания пользователя
-    @FXML private TextField departmentName;
-    @FXML private TextField locAtion;
-    @FXML private TextField description;
+    @FXML private TextField departmentName, locAtion, description;
 
     //Поля для удаления клиента
     @FXML private TextField deleteIdField;
 
     //Фильтры
-    @FXML private TextField idFilter;
-    @FXML private TextField departmentNameFilter;
-    @FXML private TextField locationFilter;
+    @FXML private TextField idFilter, departmentNameFilter, locationFilter;
     ObservableList<Department> observableDepartmentList = FXCollections.observableArrayList();
 
-    @Autowired
-    private EmployeeService employeeService;
     private Long userPassport;
     private Role userRole;
 
     public void initialize(Long userPassport) {
         this.userPassport = userPassport;
-        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+        this.userRole = employeeService
+                .findEmployeeByPassportNumber(userPassport)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник с данным номером паспорта не найден"))
+                .getRole();
+
         DepartmentId.setCellValueFactory(new PropertyValueFactory<>("DepartmentId"));
         DepartmentName.setCellValueFactory(new PropertyValueFactory<>("DepartmentName"));
         Location.setCellValueFactory(new PropertyValueFactory<>("Location"));
@@ -96,9 +107,9 @@ public class DepartmentAppController {
 
     @FXML
     private void handleCleanButton(){
-        departmentName.setText(null);
-        locAtion.setText(null);
-        description.setText(null);
+        departmentName.setText("");
+        locAtion.setText("");
+        description.setText("");
     }
 
     private void loadDepartments() {
@@ -111,8 +122,7 @@ public class DepartmentAppController {
                 departmentTable.setItems(FXCollections.emptyObservableList());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при загрузке отделов: " + e.getMessage());
+            logger.log(Level.SEVERE, "Ошибка при загрузке отделов: " + e.getMessage());
         }
     }
 
@@ -134,10 +144,7 @@ public class DepartmentAppController {
                 }
             }
         } catch (Exception e) {
-            // Логирование ошибки и/или уведомление пользователя
-            e.printStackTrace();
-
-            System.out.println("Ошибка при добавлении отдела: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при добавлении отдела: " + e.getMessage());
         }
     }
 
@@ -163,30 +170,80 @@ public class DepartmentAppController {
         }));
     }
 
-
-    @Autowired
-    private DepartmentService departmentService;
-
     @FXML
     private void handleDeleteDepartment() {
         if (userRole == org.example.demotest.entities.Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 
-            if (idText != null) {
-                // Найдем отдел по Id
-                Department department = departmentService.findDepartmentById(idText);
-                if (department != null) {
-                    departmentService.deleteDepartment(department.getDepartmentId());
-                    loadDepartments();
-                } else {
-                    System.out.println("Клиент с указанным ID не найден");
-                }
+            Department department = departmentService.findDepartmentById(idText);
+            if (department != null) {
+                departmentService.deleteDepartment(department.getDepartmentId());
+                loadDepartments();
             } else {
-                // Обработка ситуации, если оба поля пусты
-                System.out.println("Введите ID для удаления клиента");
+                System.out.println("Клиент с указанным ID не найден");
             }
         }
+    }
+    private Department selectedDepartment;
+
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        selectedDepartment = departmentTable.getSelectionModel().getSelectedItem();
+        try {
+            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                if (selectedDepartment != null) {
+                    departmentName.setText(selectedDepartment.getDepartmentName());
+                    locAtion.setText(selectedDepartment.getLocation());
+                    description.setText(selectedDepartment.getDescription());
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных департамента: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditDepartment(ActionEvent event) {
+        if (selectedDepartment == null) {
+            System.out.println("Не выбран отдел для изменения.");
+            return;
+        }
+
+        try {
+            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                ServiceRequestDepartment updatedDepartment = getServiceRequestDepartment();
+
+                Optional<Department> updated = departmentService.updatedDepartment(selectedDepartment.getDepartmentId(), updatedDepartment);
+
+                if (updated.isPresent()) {
+                    System.out.println("Отдел успешно обновлен: " + updated.get().getDepartmentName());
+                } else {
+                    System.out.println("Отдел с ID " + selectedDepartment.getDepartmentId() + " не найден.");
+                }
+
+                loadDepartments();
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например, паспорт или зарплата): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных сотрудника: " + e.getMessage());
+        }
+    }
+
+    private ServiceRequestDepartment getServiceRequestDepartment() {
+        ServiceRequestDepartment updatedDepartment = new ServiceRequestDepartment();
+
+        if (!description.getText().isEmpty()) {
+            updatedDepartment.setDescription(description.getText());
+        }
+        if (!departmentName.getText().isEmpty()) {
+            updatedDepartment.setDepartmentName(departmentName.getText());
+        }
+        if (!locAtion.getText().isEmpty()) {
+            updatedDepartment.setLocation(locAtion.getText());
+        }
+        return updatedDepartment;
     }
 
     @FXML

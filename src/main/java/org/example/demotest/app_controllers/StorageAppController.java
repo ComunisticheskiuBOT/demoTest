@@ -8,13 +8,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestStorage;
 import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
+import org.example.demotest.services.ProductService;
 import org.example.demotest.services.StorageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
@@ -22,14 +23,27 @@ import org.springframework.web.client.RestTemplate;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.example.demotest.app_controllers.EmployeeAppController.DateFilter;
 
 @Controller
 public class StorageAppController {
+    private final Logger logger = Logger.getLogger(StorageAppController.class.getName());
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+    private final EmployeeService employeeService;
+    private final ProductService productService;
+    private final StorageService storageService;
+
+    public StorageAppController(EmployeeService employeeService, StorageService storageService,  ProductService productService, ApplicationContext applicationContext){
+        this.employeeService = employeeService;
+        this.storageService = storageService;
+        this.productService = productService;
+        this.applicationContext = applicationContext;
+    }
 
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
@@ -44,10 +58,8 @@ public class StorageAppController {
         return DateFilter();
     }
 
-
-
-    private RestTemplate restTemplate = new RestTemplate();
-    private String url = "http://localhost:8080/storage-api/v1/storages";
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String url = "http://localhost:8080/storage-api/v1/storages";
 
     //Таблица
     @FXML private TableView<Storage> storageTable;
@@ -71,16 +83,15 @@ public class StorageAppController {
     @FXML private TextField productIdFilter;
     ObservableList<Storage> observableStoragesList = FXCollections.observableArrayList();
 
-
-    @Autowired
-    private EmployeeService employeeService;
-
     private Long userPassport;
     private Role userRole;
 
     public void initialize(Long userPassport) {
         this.userPassport = userPassport;
-        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+        this.userRole = employeeService
+                .findEmployeeByPassportNumber(userPassport)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник с данным номером паспорта не найден"))
+                .getRole();
 
         StorageId.setCellValueFactory(new PropertyValueFactory<>("StorageId"));
         ProductId.setCellValueFactory(cellData -> {
@@ -106,11 +117,11 @@ public class StorageAppController {
     @FXML
     private void handleCleanButton(){
         if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            storageIdField.setText(null);
-            productIdField.setText(null);
-            arrivalDateField.setText(null);
-            deleteIdField.setText(null);
-            quantityField.setText(null);
+            storageIdField.setText("");
+            productIdField.setText("");
+            arrivalDateField.setText("");
+            if(userRole == org.example.demotest.entities.Role.ADMIN) deleteIdField.setText(null);
+            quantityField.setText("");
         }
     }
 
@@ -124,8 +135,7 @@ public class StorageAppController {
                 storageTable.setItems(FXCollections.emptyObservableList());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при загрузке складов: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при загрузке складов: " + e.getMessage());
         }
     }
 
@@ -159,8 +169,72 @@ public class StorageAppController {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при добавлении склада: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при добавлении склада: " + e.getMessage());
+        }
+    }
+
+    private Storage selectedStorage;
+
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        selectedStorage = storageTable.getSelectionModel().getSelectedItem();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                if (selectedStorage != null) {
+                    storageIdField.setText(String.valueOf(selectedStorage.getStorageId()));
+                    productIdField.setText(String.valueOf(selectedStorage.getProduct().getProductId()));
+                    quantityField.setText(String.valueOf(selectedStorage.getQuantity()));
+                    arrivalDateField.setText(sdf.format(selectedStorage.getArrivalDate()));
+                }
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например количество): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных склада: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditStorage(ActionEvent event) {
+        if (selectedStorage == null) {
+            System.out.println("Не выбран склад для изменения.");
+            return;
+        }
+
+        try {
+            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                ServiceRequestStorage updatedStorage = new ServiceRequestStorage();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date parsedArrivalDate = sdf.parse(arrivalDateField.getText());
+
+                if (!storageIdField.getText().isEmpty()) {
+                    updatedStorage.setStorageId(Long.valueOf(storageIdField.getText()));
+                }
+                if (!productIdField.getText().isEmpty()) {
+                    updatedStorage.setProduct(productService.findProductById(Long.valueOf(productIdField.getText())));
+                }
+                if (!quantityField.getText().isEmpty()) {
+                    updatedStorage.setQuantity(Integer.valueOf(quantityField.getText()));
+                }
+                if (arrivalDateField.getText() != null) {
+                    updatedStorage.setArrivalDate(parsedArrivalDate);
+                }
+
+                Optional<Storage> updated = storageService.updatedStorage(selectedStorage.getStorageId(), updatedStorage);
+
+                if (updated.isPresent()) {
+                    System.out.println("Склад успешно обновлен: " + updated.get().getStorageId());
+                } else {
+                    System.out.println("Склад с ID " + selectedStorage.getStorageId() + " не найден.");
+                }
+
+                loadStorages();
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например количество): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных склада: " + e.getMessage());
         }
     }
 
@@ -180,24 +254,17 @@ public class StorageAppController {
         }));
     }
 
-
-    @Autowired
-    private StorageService storageService;
     @FXML
     private void handleDeleteStorage() {
         if(userRole == org.example.demotest.entities.Role.ADMIN) {
             Long idText = Long.valueOf(deleteIdField.getText());
 
-            if (idText != null) {
-                Storage storage = storageService.findStorageById(idText);
-                if (storage != null) {
-                    storageService.deleteStorage(storage.getStorageId());
-                    loadStorages();
-                } else {
-                    System.out.println("Склад указанным ID не найден");
-                }
+            Storage storage = storageService.findStorageById(idText);
+            if (storage != null) {
+                storageService.deleteStorage(storage.getStorageId());
+                loadStorages();
             } else {
-                System.out.println("Введите ID для склада");
+                System.out.println("Склад указанным ID не найден");
             }
         }
     }

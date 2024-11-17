@@ -54,15 +54,6 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addClientButton" mnemonicParsing="false" text="Добавить клиента"
-                        onAction="#handleAddClient"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="companyNameFilter" promptText="Фильтр по наименованию"/>
                 <TextField fx:id="contactPersonFilter" promptText="Фильтр по контакту"/>
@@ -81,14 +72,17 @@
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteClientButton" mnemonicParsing="false" text="Удалить клиента"
-                        onAction="#handleDeleteClient"/>
+                <Button fx:id="handleEditClient" mnemonicParsing="false" text="Изменить"
+                        onAction="#handleEditClient"/>
                 <Button fx:id="updateClientButton" mnemonicParsing="false" text="Обновить"
                         onAction="#handleUpdateClients"/>
+                <Button fx:id="cleanClientButton" mnemonicParsing="false" text="Очистить"
+                        onAction="#handleCleanButton"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="clientTable">
+            <TableView fx:id="clientTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="ClientId"/>
                     <TableColumn text="Название компании" fx:id="CompanyName"/>

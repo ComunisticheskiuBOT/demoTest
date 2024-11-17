@@ -36,28 +36,22 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addStorageButton" mnemonicParsing="false" text="Добавить склад"
-                        onAction="#handleAddStorages"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="productIdFilter" promptText="Фильтр по ID продукции"/>
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteStorageButton" mnemonicParsing="false" text="Удалить склад"
-                        onAction="#handleDeleteStorage"/>
+                <Button fx:id="editStorageButton" mnemonicParsing="false" text="Изменить"
+                        onAction="#handleEditStorage"/>
                 <Button fx:id="updateStorageButton" mnemonicParsing="false" text="Обновить"
                         onAction="#handleUpdateStorages"/>
+                <Button fx:id="cleanStorageButton" mnemonicParsing="false" text="Очистить"
+                        onAction="#handleCleanButton"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="storageTable">
+            <TableView fx:id="storageTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="StorageId"/>
                     <TableColumn text="ID продукта" fx:id="ProductId"/>

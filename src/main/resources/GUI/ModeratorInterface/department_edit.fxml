@@ -32,12 +32,6 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addDepartmentButton" mnemonicParsing="false" text="Добавить отдел"
-                        onAction="#handleAddDepartment"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
@@ -47,14 +41,17 @@
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteDepartmentButton" mnemonicParsing="false" text="Удалить отдел"
+                <Button fx:id="editDepartmentButton" mnemonicParsing="false" text="Изменить"
                         onAction="#handleDeleteDepartment"/>
                 <Button fx:id="updateDepartmentButton" mnemonicParsing="false" text="Обновить"
                         onAction="#handleUpdateDepartments"/>
+                <Button fx:id="cleanDepartmentButton" mnemonicParsing="false" text="Очистить"
+                        onAction="#handleCleanButton"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="departmentTable">
+            <TableView fx:id="departmentTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="DepartmentId"/>
                     <TableColumn text="Название отдела" fx:id="DepartmentName"/>

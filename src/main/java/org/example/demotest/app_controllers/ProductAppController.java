@@ -8,12 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.example.demotest.dto.ServiceRequestEmployee;
 import org.example.demotest.dto.ServiceRequestProduct;
-import org.example.demotest.entities.Product;
-import org.example.demotest.entities.ProductType;
-import org.example.demotest.entities.Project;
-import org.example.demotest.entities.Role;
+import org.example.demotest.entities.*;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProductService;
@@ -22,15 +21,28 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import static java.lang.Double.*;
 import static org.example.demotest.app_controllers.EmployeeAppController.Numeric10Filter;
 
 @Controller
 public class ProductAppController {
+    private final Logger logger = Logger.getLogger(ProductAppController.class.getName());
+    private final ApplicationContext applicationContext;
+    private final EmployeeService employeeService;
+    private final ProductService productService;
 
-    @Autowired
-    private ApplicationContext applicationContext;
+    public ProductAppController(EmployeeService employeeService, ProductService productService, ApplicationContext applicationContext){
+        this.employeeService = employeeService;
+        this.productService = productService;
+        this.applicationContext = applicationContext;
+    }
 
     private TextFormatter<String> createAlphaFilter() {
         return new TextFormatter<>(change -> {
@@ -43,7 +55,8 @@ public class ProductAppController {
 
     private TextFormatter<String> createNumericFilter() {
         return new TextFormatter<>(change -> {
-            if (change.getControlNewText().matches("\\d*")) {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty() || newText.matches("\\d*")) {
                 return change;
             }
             return null;
@@ -84,16 +97,15 @@ public class ProductAppController {
     @FXML private ComboBox<String> productTypeFilter;
     ObservableList<Product> observableProductsList = FXCollections.observableArrayList();
 
-
-    @Autowired
-    private EmployeeService employeeService;
-
     private Long userPassport;
     private Role userRole;
 
     public void initialize(Long userPassport) {
         this.userPassport = userPassport;
-        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+        this.userRole = employeeService
+                .findEmployeeByPassportNumber(userPassport)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник с данным номером паспорта не найден"))
+                .getRole();
 
         ProductId.setCellValueFactory(new PropertyValueFactory<>("ProductId"));
         ProjectId.setCellValueFactory(cellData -> {
@@ -125,13 +137,13 @@ public class ProductAppController {
     @FXML
     private void handleCleanButton(){
         if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            projectIdField.setText(null);
-            productNameField.setText(null);
-            deleteIdField.setText(null);
+            projectIdField.setText("");
+            productNameField.setText("");
+            deleteIdField.setText("");
             productTypeField.getSelectionModel().clearSelection();
-            quantityField.setText(null);
-            weightField.setText(null);
-            costField.setText(null);
+            quantityField.setText("");
+            weightField.setText("");
+            costField.setText("");
         }
     }
 
@@ -145,12 +157,9 @@ public class ProductAppController {
                 productTable.setItems(FXCollections.emptyObservableList());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при загрузке продуктов: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при загрузке продуктов: " + e.getMessage());
         }
     }
-
-
 
     @FXML
     private void handleAddProduct(ActionEvent event) {
@@ -169,7 +178,7 @@ public class ProductAppController {
                         .productName(productNameField.getText())
                         .productType(productTypeField.getValue())
                         .quantity(Integer.valueOf(quantityField.getText()))
-                        .weight(Double.valueOf(weightField.getText()))
+                        .weight(valueOf(weightField.getText()))
                         .cost(Integer.valueOf(costField.getText()))
                         .build();
                 System.out.println("Отправляемый продукт: " + newProduct);
@@ -181,10 +190,73 @@ public class ProductAppController {
                 }
             }
         } catch (Exception e) {
-            // Логирование ошибки и/или уведомление пользователя
-            e.printStackTrace();
+            logger.log(Level.SEVERE,"Ошибка при добавлении продукта: " + e.getMessage());
+        }
+    }
 
-            System.out.println("Ошибка при добавлении продукта: " + e.getMessage());
+    private Product selectedProduct;
+
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        selectedProduct = productTable.getSelectionModel().getSelectedItem();
+        try {
+            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                if (selectedProduct != null) {
+                    projectIdField.setText(String.valueOf(selectedProduct.getProjectId()));
+                    productNameField.setText(String.valueOf(selectedProduct.getProductName()));
+                    quantityField.setText(String.valueOf(selectedProduct.getQuantity()));
+                    weightField.setText(String.valueOf(selectedProduct.getWeight()));
+                    costField.setText(String.valueOf(selectedProduct.getCost()));
+                    productTypeField.setValue(selectedProduct.getProductType());
+                }
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например, стоимость, масса или количество): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных продукта: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditProduct(ActionEvent event) {
+        if (selectedProduct == null) {
+            System.out.println("Не выбран сотрудник для изменения.");
+            return;
+        }
+
+        try {
+            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                ServiceRequestProduct updatedProduct = new ServiceRequestProduct();
+                if (!productNameField.getText().isEmpty()) {
+                    updatedProduct.setProductName(productNameField.getText());
+                }
+                if (!quantityField.getText().isEmpty()) {
+                    updatedProduct.setQuantity(Integer.valueOf(quantityField.getText()));
+                }
+                if (!weightField.getText().isEmpty()) {
+                    updatedProduct.setWeight(valueOf(weightField.getText()));
+                }
+                if (!costField.getText().isEmpty()) {
+                    updatedProduct.setCost(Integer.valueOf(costField.getText()));
+                }
+                if (productTypeField.getValue() != null) {
+                    updatedProduct.setProductType(productTypeField.getValue());
+                }
+
+                Optional<Product> updated = productService.updatedProduct(selectedProduct.getProductId(), updatedProduct);
+
+                if (updated.isPresent()) {
+                    System.out.println("Продукт успешно обновлен: " + updated.get().getProductName());
+                } else {
+                    System.out.println("Продукт с ID " + selectedProduct.getProductId() + " не найден.");
+                }
+
+                loadProducts();
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например, стоимость, масса или количество): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных продукта: " + e.getMessage());
         }
     }
 
@@ -207,31 +279,21 @@ public class ProductAppController {
             boolean matchesProductName = productName.isEmpty() || product.getProductName().toLowerCase().contains(productName);
             boolean matchesProductTypeFilterValue = productTypeFilterValue == null || "ALL".equals(productTypeFilterValue) || product.getProductType().name().equalsIgnoreCase(productTypeFilterValue);
 
-            // Возвращаем результат проверки всех фильтров
             return matchesId && matchesProductName && matchesProductTypeFilterValue;
         }));
     }
 
-
-    @Autowired
-    private ProductService productService;
     @FXML
     private void handleDeleteProduct() {
         if(userRole == org.example.demotest.entities.Role.ADMIN) {
             Long idText = Long.valueOf(deleteIdField.getText());
 
-            if (idText != null) {
-                // Найдем пользователя по Id
-                Product product = productService.findProductById(idText);
-                if (product != null) {
-                    productService.deleteProduct(product.getProductId());
-                    loadProducts();
-                } else {
-                    System.out.println("Продукт с указанным ID не найден");
-                }
+            Product product = productService.findProductById(idText);
+            if (product != null) {
+                productService.deleteProduct(product.getProductId());
+                loadProducts();
             } else {
-                // Обработка ситуации, если оба поля пусты
-                System.out.println("Введите ID для удаления продукта");
+                System.out.println("Продукт с указанным ID не найден");
             }
         }
     }

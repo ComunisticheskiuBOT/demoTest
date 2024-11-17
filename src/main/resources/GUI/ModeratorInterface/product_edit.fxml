@@ -15,7 +15,7 @@
     <StackPane>
         <VBox spacing="10.0" alignment="BOTTOM_CENTER">
 
-            <GridPane hgap="15" vgap="10">
+            <GridPane>
                 <columnConstraints>
                     <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
                     <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
@@ -52,15 +52,6 @@
             </GridPane>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addProductButton" mnemonicParsing="false" text="Добавить продукт"
-                        onAction="#handleAddProduct"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="productNameFilter" promptText="Фильтр по наименованию"/>
                 <ComboBox fx:id="productTypeFilter">
@@ -75,14 +66,17 @@
             </HBox>
 
             <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteProductButton" mnemonicParsing="false" text="Удалить продукт"
-                        onAction="#handleDeleteProduct"/>
+                <Button fx:id="deleteProductButton" mnemonicParsing="false" text="Изменить"
+                        onAction="#handleEditProduct"/>
                 <Button fx:id="updateProductButton" mnemonicParsing="false" text="Обновить"
                         onAction="#handleUpdateProducts"/>
+                <Button fx:id="cleanProductButton" mnemonicParsing="false" text="Очистить"
+                        onAction="#handleCleanButton"/>
+                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
+                        onAction="#handleBackButton"/>
             </HBox>
 
-            <TableView fx:id="productTable">
+            <TableView fx:id="productTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="ProductId"/>
                     <TableColumn text="ID проекта" fx:id="ProjectId"/>

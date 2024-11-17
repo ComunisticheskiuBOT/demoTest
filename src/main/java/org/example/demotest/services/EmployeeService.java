@@ -74,10 +74,6 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public boolean departmentExists(Long departmentId) {
-        return departmentRepository.findById(departmentId).isPresent();
-    }
-
     @Transactional(readOnly = true)
     public Department getDepartmentById(Long departmentId) {
         return departmentRepository.findById(departmentId)

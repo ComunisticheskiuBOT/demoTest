@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestClient;
 import org.example.demotest.entities.Client;
@@ -15,22 +16,28 @@ import org.example.demotest.entities.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.ClientService;
 import org.example.demotest.services.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.example.demotest.app_controllers.EmployeeAppController.PhoneFilter;
 
 @Controller
 public class ClientAppController {
-
+    private final Logger logger = Logger.getLogger(ClientAppController.class.getName());
     private final ApplicationContext applicationContext;
+    private final ClientService clientService;
+    private final EmployeeService employeeService;
 
-    public ClientAppController(ApplicationContext applicationContext) {
+    public ClientAppController(ApplicationContext applicationContext, ClientService clientService, EmployeeService employeeService) {
         this.applicationContext = applicationContext;
+        this.clientService = clientService;
+        this.employeeService = employeeService;
     }
 
     private TextFormatter<String> createAlphaFilter() {
@@ -76,14 +83,15 @@ public class ClientAppController {
     @FXML private ComboBox<String> reputationFilter;
     ObservableList<Client> observableClientList = FXCollections.observableArrayList();
 
-    @Autowired
-    private EmployeeService employeeService;
     private Long userPassport;
     private Role userRole;
 
     public void initialize(Long userPassport) {
         this.userPassport = userPassport;
-        this.userRole = employeeService.findEmployeeByPassportNumber(userPassport).get().getRole();
+        this.userRole = employeeService
+                .findEmployeeByPassportNumber(userPassport)
+                .orElseThrow(() -> new IllegalArgumentException("Сотрудник с данным номером паспорта не найден"))
+                .getRole();
 
         ClientId.setCellValueFactory(new PropertyValueFactory<>("ClientId"));
         CompanyName.setCellValueFactory(new PropertyValueFactory<>("CompanyName"));
@@ -111,12 +119,12 @@ public class ClientAppController {
 
     @FXML
     private void handleCleanButton(){
-        if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            companyName.setText(null);
-            contactPerson.setText(null);
-            phoneNumber.setText(null);
-            email.setText(null);
-            address.setText(null);
+        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            companyName.setText("");
+            contactPerson.setText("");
+            phoneNumber.setText("");
+            email.setText("");
+            address.setText("");
             reputationComboBox.getSelectionModel().clearSelection();
         }
     }
@@ -124,15 +132,14 @@ public class ClientAppController {
     private void loadClients() {
         try {
             Client[] clients = restTemplate.getForObject(url, Client[].class);
-            if (clients != null && clients.length > 0) { // Проверяем, что массив не пустой
+            if (clients != null && clients.length > 0) {
                 observableClientList.setAll(Arrays.asList(clients));
                 clientTable.setItems(observableClientList);
             } else {
                 clientTable.setItems(FXCollections.emptyObservableList());
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Ошибка при загрузке сотрудников: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при загрузке сотрудников: " + e.getMessage());
         }
     }
 
@@ -157,11 +164,84 @@ public class ClientAppController {
                 }
             }
         } catch (Exception e) {
-            // Логирование ошибки и/или уведомление пользователя
-            e.printStackTrace();
-
-            System.out.println("Ошибка при добавлении сотрудника: " + e.getMessage());
+            logger.log(Level.SEVERE,"Ошибка при добавлении сотрудника: " + e.getMessage());
         }
+    }
+
+    private Client selectedClient;
+
+    @FXML
+    private void handleTableClick(MouseEvent event) {
+        selectedClient = clientTable.getSelectionModel().getSelectedItem();
+        try {
+            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                if (selectedClient != null) {
+                    companyName.setText(selectedClient.getCompanyName());
+                    contactPerson.setText(selectedClient.getContactPerson());
+                    phoneNumber.setText(selectedClient.getPhoneNumber());
+                    email.setText(String.valueOf(selectedClient.getEmail()));
+                    address.setText(selectedClient.getAddress());
+                    reputationComboBox.setValue(selectedClient.getReputation());
+                }
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например, номер телефона): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных сотрудника: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleEditClient(ActionEvent event) {
+        if (selectedClient == null) {
+            System.out.println("Не выбран сотрудник для изменения.");
+            return;
+        }
+
+        try {
+            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+                ServiceRequestClient updatedClient = getServiceRequestClient();
+
+                Optional<Client> updated = clientService.updatedClient(selectedClient.getClientId(), updatedClient);
+
+                if (updated.isPresent()) {
+                    System.out.println("Клиент успешно обновлен: " + updated.get().getCompanyName());
+                } else {
+                    System.out.println("Клиент с ID " + selectedClient.getClientId() + " не найден.");
+                }
+
+                loadClients();
+            }
+        } catch (NumberFormatException e) {
+            logger.log(Level.WARNING,"Ошибка в числовом формате (например, номер телефона): " + e.getMessage());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE,"Ошибка при изменении данных клиента: " + e.getMessage());
+        }
+    }
+
+    private ServiceRequestClient getServiceRequestClient() {
+        ServiceRequestClient updatedClient = new ServiceRequestClient();
+
+        if (!companyName.getText().isEmpty()) {
+            updatedClient.setCompanyName(companyName.getText());
+        }
+        if (!contactPerson.getText().isEmpty()) {
+            updatedClient.setContactPerson(contactPerson.getText());
+        }
+        if (!phoneNumber.getText().isEmpty()) {
+            updatedClient.setPhoneNumber(phoneNumber.getText());
+        }
+        if (!email.getText().isEmpty()) {
+            updatedClient.setEmail(email.getText());
+        }
+        if (!address.getText().isEmpty()) {
+            updatedClient.setAddress(address.getText());
+        }
+        if (reputationComboBox.getValue() != null) {
+            updatedClient.setReputation(reputationComboBox.getValue());
+        }
+
+        return updatedClient;
     }
 
     private void setupFilters() {
@@ -174,9 +254,9 @@ public class ClientAppController {
     }
 
     private void applyFilters() {
-        String id = idFilter.getText();
-        String companyName = companyNameFilter.getText().toLowerCase();
-        String contactPerson = contactPersonFilter.getText().toLowerCase();
+        String id = safeGetText(idFilter);
+        String companyName = safeGetText(companyNameFilter);
+        String contactPerson = safeGetText(contactPersonFilter);
         String reputationFilterValue = reputationFilter.getValue();
 
         clientTable.setItems(observableClientList.filtered(client -> {
@@ -188,28 +268,22 @@ public class ClientAppController {
             return matchesId && matchesCompanyName && matchesContactPerson && matchesReputation;
         }));
     }
-
-    @Autowired
-    private ClientService clientService;
+    private String safeGetText(TextField textField) {
+        String text = textField.getText();
+        return text != null ? text.trim().toLowerCase() : "";
+    }
 
     @FXML
     private void handleDeleteClient() {
-        if(userRole == org.example.demotest.entities.Role.ADMIN) {
-
+        if (userRole == org.example.demotest.entities.Role.ADMIN) {
             Long idText = Long.valueOf(deleteIdField.getText());
 
-            if (idText != null) {
-                // Найдем пользователя по Id
-                Client client = clientService.findClientById(idText);
-                if (client != null) {
-                    clientService.deleteClient(client.getClientId());
-                    loadClients();
-                } else {
-                    System.out.println("Клиент с указанным ID не найден");
-                }
+            Client client = clientService.findClientById(idText);
+            if (client != null) {
+                clientService.deleteClient(client.getClientId());
+                loadClients();
             } else {
-                // Обработка ситуации, если оба поля пусты
-                System.out.println("Введите ID для удаления клиента");
+                System.out.println("Клиент с указанным ID не найден");
             }
         }
     }
