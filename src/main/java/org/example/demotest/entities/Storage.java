@@ -28,7 +28,7 @@ public class Storage {
     @Column(name = "quantity")
     private Integer quantity;
     @Column(name = "arrival_date")
-    private Date arrivalDate;
+    private Date arrivalDate; // Instant / LocalDate
 
     @JsonProperty("productId")
     public Long getProductId() {

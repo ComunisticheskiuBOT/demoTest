@@ -30,7 +30,7 @@ public class StorageService {
         try {
             // Проверка существования склада с указанным ID
             Optional<Storage> existingStorage = storageRepository.findById(serviceRequestStorage.getStorageId());
-
+            // Прочитай про modelMapper
             if (existingStorage.isPresent()) {
                 // Если склад с таким ID уже существует, обновляем его данные
                 Storage storageToUpdate = existingStorage.get();
@@ -81,6 +81,7 @@ public class StorageService {
     }
 
     public Optional<Storage> updatedStorage(Long id, ServiceRequestStorage updatedStorage) {
+        // Прочитай про modelMapper
         return storageRepository.findById(id).map(storage -> {
             if (updatedStorage.getProduct() != null) {
                 storage.setProduct(updatedStorage.getProduct());

@@ -27,6 +27,7 @@ public class ProductService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Product createProduct(ServiceRequestProduct serviceRequestProduct) {
         try {
+            // Прочитай про modelMapper
             return productRepository.save(Product.builder()
                     .project(serviceRequestProduct.getProject())
                     .productName(serviceRequestProduct.getProductName())
@@ -65,6 +66,7 @@ public class ProductService {
     }
 
     public Optional<Product> updatedProduct(Long id, ServiceRequestProduct updatedProduct) {
+        // Прочитай про modelMapper
         return productRepository.findById(id).map(product -> {
             if (updatedProduct.getProductName() != null) {
                 product.setProductName(updatedProduct.getProductName());

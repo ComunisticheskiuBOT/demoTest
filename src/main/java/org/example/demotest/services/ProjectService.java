@@ -26,6 +26,7 @@ public class ProjectService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Project createProject(ServiceRequestProject serviceRequestProject) {
         try {
+            // Прочитай про modelMapper
             return projectRepository.save(Project.builder()
                     .engineerId(serviceRequestProject.getEngineerId())
                     .projectName(serviceRequestProject.getProjectName())
@@ -65,6 +66,7 @@ public class ProjectService {
     }
 
     public Optional<Project> updatedProject(Long id, ServiceRequestProject updatedProject) {
+        // Прочитай про modelMapper
         return projectRepository.findById(id).map(project -> {
             if (updatedProject.getEngineerId() != null) {
                 project.setEngineerId(updatedProject.getEngineerId());

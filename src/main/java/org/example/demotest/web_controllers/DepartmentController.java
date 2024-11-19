@@ -12,6 +12,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+/*
+если в рамках контроллера общий префикс, как тут - /department-api/v1/departments
+используй @RequestMapping на контроллере
+Аналогично для других контроллеров
+ */
 public class DepartmentController {
     private final DepartmentService departmentService;
 

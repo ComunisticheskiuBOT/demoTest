@@ -24,6 +24,7 @@ public class DepartmentService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Department createDepartment(ServiceRequestDepartment serviceRequestDepartment) {
         try {
+            // Прочитай про modelMapper
             return departmentRepository.save(Department.builder()
                     .departmentName(serviceRequestDepartment.getDepartmentName())
                     .location(serviceRequestDepartment.getLocation())
@@ -51,6 +52,7 @@ public class DepartmentService {
     }
 
     public Optional<Department> updatedDepartment(Long id, ServiceRequestDepartment updatedDepartment) {
+        // Прочитай про modelMapper
         return departmentRepository.findById(id).map(department -> {
             if (updatedDepartment.getDepartmentName() != null) {
                 department.setDepartmentName(updatedDepartment.getDepartmentName());

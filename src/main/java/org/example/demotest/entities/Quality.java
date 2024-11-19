@@ -23,6 +23,7 @@ public class Quality {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "inspector_id", referencedColumnName = "id")
+    // я бы лучше назван inspector_employee_id
     private Employee inspector;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -30,10 +31,11 @@ public class Quality {
     private Product product;
 
     @Column(name = "inspection_date")
-    private Date inspectionDate;
+    private Date inspectionDate; // Instant / LocalDate
     @Column(name = "result")
     private Result result;
     @Column(name = "comments")
+    // 255 Символов не маловато?
     private String comments;
 
     @JsonProperty("inspectorId")

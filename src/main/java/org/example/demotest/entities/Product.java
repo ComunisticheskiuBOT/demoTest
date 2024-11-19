@@ -30,11 +30,11 @@ public class Product {
     @Column(name = "product_type")
     private ProductType productType;
     @Column(name = "quantity")
-    private Integer quantity;
+    private Integer quantity; // BigInteger
     @Column(name = "weight")
-    private Double weight;
+    private Double weight; // BigDecimal
     @Column(name = "cost")
-    private Integer cost;
+    private Integer cost; // BigDecimal
     @JsonProperty("projectId")
     public Long getProjectId() {
         return project != null ? project.getProjectId() : null;

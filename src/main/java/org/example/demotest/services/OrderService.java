@@ -32,7 +32,7 @@ public class OrderService {
         try {
             clientRepository.findById(serviceRequestOrder.getClient().getClientId())
                     .orElseThrow(() -> new RuntimeException("Департамент с ID '" + serviceRequestOrder.getClient().getClientId() + "' не найден"));
-
+            // Прочитай про modelMapper
             return orderRepository.save(Order.builder()
                     .orderId(serviceRequestOrder.getOrderId())
                     .client(serviceRequestOrder.getClient())
@@ -75,6 +75,7 @@ public class OrderService {
     }
 
     public Optional<Order> updateOrder(Long id, ServiceRequestOrder updatedOrder) {
+        // Прочитай про modelMapper
         return orderRepository.findById(id).map(order -> {
             if (updatedOrder.getOrderId() != null) {
                 order.setOrderId(updatedOrder.getOrderId());

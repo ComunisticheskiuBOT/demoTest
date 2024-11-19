@@ -23,8 +23,8 @@ public class ServiceRequestOrder implements Serializable {
     private Long orderId;
     private Client client;
     private Project project;
-    private Date dateOfOrder;
-    private Date dateOfExecution;
+    private Date dateOfOrder; // Лучше используй Instant / LocalDate / LocaleDateTime
+    private Date dateOfExecution; // Лучше используй Instant / LocalDate / LocaleDateTime
     private OrderStatus orderStatus;
     private String orderDescription;
 }

@@ -11,12 +11,18 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
-@Table(name = "\"clients\"")
+@Table(name = "\"clients\"") //Зачем внутри ковычки? Если совпадает с системным слово в БД, то лучше меняй название
 public class Client {
     @Id
     @Column(name = "client_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientId;
+
+    /*
+    Генерацию айдишников можно вынести в один абстрактный класс с аннотаций @MappedSuperclass и наследовать все сущности от него
+    Как будто не хватает мета информации - вроде createTs / updateTs
+     */
+
     @Column(name = "company_name")
     private String companyName;
     @Column(name = "contact_person")

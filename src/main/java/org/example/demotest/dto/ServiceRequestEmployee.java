@@ -24,14 +24,14 @@ public class ServiceRequestEmployee implements Serializable {
     private String firstName;
     private String secondName;
     private String lastName;
-    private Date birthDate;
+    private Date birthDate; // Лучше используй Instant / LocalDate / LocaleDateTime
     private Long passportNumber;
     private String address;
     private String phoneNumber;
     private String email;
     private String password;
-    private Date hireDate;
-    private Date terminationDate;
+    private Date hireDate; // Лучше используй Instant / LocalDate / LocaleDateTime
+    private Date terminationDate; // Лучше используй Instant / LocalDate / LocaleDateTime
     private Department department;
     private String position;
     private Role role;

@@ -52,7 +52,7 @@ public class Employee {
     @Column(name = "status")
     private Status status;
     @Column(name = "salary")
-    private Integer salary;
+    private Integer salary; // Заменить на BigInteger
     @Column(name = "comments")
     private String comments;
 }
