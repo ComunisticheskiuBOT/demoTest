@@ -17,7 +17,7 @@ public class ServiceRequestClient implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long client_id;
+    private Long client_id; // Нарушаешь camelCase
     private String companyName;
     private String contactPerson;
     private String phoneNumber;

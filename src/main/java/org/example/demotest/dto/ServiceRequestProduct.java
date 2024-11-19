@@ -23,10 +23,21 @@ public class ServiceRequestProduct implements Serializable {
 
     private Long productId;
     @JsonProperty("projectId")
-    private Project project;
+    private Project project; // Вроде из JSON тянешь как айдишник, а сериализуешь в объект. Может вводить в заблуждение
+    /*
+    Тем более что в других местах у тебя есть <object>Id - и это айдишник
+     */
     private String productName;
     private ProductType productType;
-    private Integer quantity;
-    private Double weight;
-    private Integer cost;
+    private Integer quantity; // Заменить на BigInteger
+    private Double weight; // Заменить на BigDecimal
+    private Integer cost; // Заменить на BigDecimal
+
+    /*
+
+    В деньгах, количестве, массе и тд лучше использовать около бесконечные типы
+    BigInteger - для целых
+    BigDecimal - для дробных
+
+     */
 }

@@ -54,6 +54,7 @@ public class ClientService {
     }
 
     public Optional<Client> updatedClient(Long id, ServiceRequestClient updatedClient) {
+        // Прочитай про modelMapper
         return clientRepository.findById(id).map(client -> {
             if (updatedClient.getCompanyName() != null) {
                 client.setCompanyName(updatedClient.getCompanyName());

@@ -29,7 +29,7 @@ public class EmployeeService {
         try {
             departmentRepository.findById(serviceRequestEmployee.getDepartment().getDepartmentId())
                     .orElseThrow(() -> new RuntimeException("Департамент с ID '" + serviceRequestEmployee.getDepartment().getDepartmentId() + "' не найден"));
-
+            // Прочитай про modelMapper
             return employeeRepository.save(Employee.builder()
                     .firstName(serviceRequestEmployee.getFirstName())
                     .secondName(serviceRequestEmployee.getSecondName())
@@ -90,6 +90,7 @@ public class EmployeeService {
     }
 
     public Optional<Employee> updateEmployee(Long id, ServiceRequestEmployee updatedEmployee) {
+        // Прочитай про modelMapper
         return employeeRepository.findById(id).map(employee -> {
             if (updatedEmployee.getFirstName() != null) {
                 employee.setFirstName(updatedEmployee.getFirstName());

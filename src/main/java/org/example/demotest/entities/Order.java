@@ -36,5 +36,6 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     @Column(name = "order_description")
+    // А нам может не хватить 255 символов для описания, такие поля либо расширяй, либо валидируй на входе
     private String orderDescription;
 }

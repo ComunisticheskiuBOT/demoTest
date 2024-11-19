@@ -22,8 +22,8 @@ public class ServiceRequestStorage implements Serializable {
     private Long storageId;
 
     @JsonProperty("productId")
-    private Product product;
+    private Product product; // См. ServiceRequestProduct
 
-    private Integer quantity;
-    private Date arrivalDate;
+    private Integer quantity; // См. ServiceRequestProduct
+    private Date arrivalDate; // См. ServiceRequestEmployee
 }

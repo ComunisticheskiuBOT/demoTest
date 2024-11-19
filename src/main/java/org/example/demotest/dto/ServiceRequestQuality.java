@@ -23,10 +23,10 @@ public class ServiceRequestQuality implements Serializable {
 
     private Long qualityId;
     @JsonProperty("inspectorId")
-    private Employee inspector;
+    private Employee inspector; // См. ServiceRequestProduct
     @JsonProperty("productId")
-    private Product product;
-    private Date inspectionDate;
+    private Product product; // См. ServiceRequestProduct
+    private Date inspectionDate; // См. ServiceRequestEmployee
     private Result result;
     private String comments;
 }

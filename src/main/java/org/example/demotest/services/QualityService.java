@@ -31,6 +31,7 @@ public class QualityService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Quality createQuality(ServiceRequestQuality serviceRequestQuality) {
         try {
+            // Прочитай про modelMapper
             return qualityRepository.save(Quality.builder()
                     .inspector(serviceRequestQuality.getInspector())
                     .product(serviceRequestQuality.getProduct())
@@ -79,6 +80,7 @@ public class QualityService {
     }
 
     public Optional<Quality> updatedQuality(Long id, ServiceRequestQuality updatedQuality) {
+        // Прочитай про modelMapper
         return qualityRepository.findById(id).map(quality -> {
             if (updatedQuality.getInspector() != null) {
                 quality.setInspector(updatedQuality.getInspector());
