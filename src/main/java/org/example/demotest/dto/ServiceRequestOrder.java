@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demotest.entities.Client;
-import org.example.demotest.entities.OrderStatus;
+import org.example.demotest.entities.enums.OrderStatus;
 import org.example.demotest.entities.Project;
 
 import java.io.Serial;

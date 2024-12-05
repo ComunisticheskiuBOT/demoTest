@@ -12,12 +12,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceRequestDepartment implements Serializable {
+public class ServiceRequestMeasurement implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Long departmentId;
-    private String departmentName;
-    private String location;
+    private Long measurement_id;
+    private String name;
     private String description;
 }

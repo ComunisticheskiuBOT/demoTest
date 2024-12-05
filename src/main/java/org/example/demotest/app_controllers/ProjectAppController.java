@@ -10,9 +10,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestProject;
-import org.example.demotest.entities.MaterialType;
+import org.example.demotest.entities.enums.MaterialType;
 import org.example.demotest.entities.Project;
-import org.example.demotest.entities.Role;
+import org.example.demotest.entities.enums.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProjectService;
@@ -135,9 +135,9 @@ public class ProjectAppController {
         ExpectedTime.setCellValueFactory(new PropertyValueFactory<>("ExpectedTime"));
         ProjectDescription.setCellValueFactory(new PropertyValueFactory<>("ProjectDescription"));
 
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
 
-            materialTypeField.getItems().setAll(org.example.demotest.entities.MaterialType.values());
+            materialTypeField.getItems().setAll(MaterialType.values());
             projectNameField.setTextFormatter(createAlphaFilter());
             engineerIdField.setTextFormatter(createNumericFilter());
             expectedTimeField.setTextFormatter(createDurationFilter());
@@ -154,7 +154,7 @@ public class ProjectAppController {
 
     @FXML
     private void handleCleanButton(){
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             engineerIdField.setText("");
             projectNameField.setText("");
             drawingField.setText("");
@@ -181,7 +181,7 @@ public class ProjectAppController {
     @FXML
     private void handleAddProject(ActionEvent event) {
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN) {
+            if(userRole == Role.ADMIN) {
 
 
                 Long employeeId = Long.valueOf(engineerIdField.getText());
@@ -216,7 +216,7 @@ public class ProjectAppController {
     private void handleTableClick(MouseEvent event) {
         selectedProject = projectTable.getSelectionModel().getSelectedItem();
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedProject != null) {
                     engineerIdField.setText(String.valueOf(selectedProject.getEngineerId()));
                     projectNameField.setText(selectedProject.getProjectName());
@@ -241,7 +241,7 @@ public class ProjectAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestProject updatedProject = new ServiceRequestProject();
 
                 if (!engineerIdField.getText().isEmpty()) {
@@ -307,7 +307,7 @@ public class ProjectAppController {
 
     @FXML
     private void handleDeleteProject() {
-        if(userRole == org.example.demotest.entities.Role.ADMIN) {
+        if(userRole == Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 

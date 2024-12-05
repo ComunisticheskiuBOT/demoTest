@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane prefWidth="600.0" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.demotest.app_controllers.MeasurementAppController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <StackPane>
+        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <TextField fx:id="idFilter" promptText="По ID"/>
+                <TextField fx:id="measurementFilter" promptText="По наименованию"/>
+            </HBox>
+
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button mnemonicParsing="false" onAction="#handleUpdateMeasurements"/>
+                <Button mnemonicParsing="false" onAction="#handleCleanButton"/>
+            </HBox>
+
+            <TableView fx:id="measurementTable">
+                <columns>
+                    <TableColumn text="ID" maxWidth="80.0" minWidth="80.0" fx:id="MeasurementId"/>
+                    <TableColumn text="Единица измерения" maxWidth="150.0" minWidth="150.0" fx:id="Name"/>
+                    <TableColumn text="Описание" maxWidth="150.0" minWidth="150.0" fx:id="Description"/>
+                </columns>
+            </TableView>
+
+        </VBox>
+    </StackPane>
+</StackPane>

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.demotest.entities.MaterialType;
+import org.example.demotest.entities.enums.MaterialType;
 
 import java.io.Serial;
 import java.io.Serializable;

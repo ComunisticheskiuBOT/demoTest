@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.demotest.entities.MaterialType;
-import org.example.demotest.entities.ProductType;
+import org.example.demotest.entities.enums.ProductType;
 import org.example.demotest.entities.Project;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Duration;
 
 @Data
 @NoArgsConstructor

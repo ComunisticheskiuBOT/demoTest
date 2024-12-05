@@ -10,26 +10,24 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import org.example.demotest.dto.ServiceRequestEmployee;
 import org.example.demotest.dto.ServiceRequestProduct;
 import org.example.demotest.entities.*;
+import org.example.demotest.entities.enums.ProductType;
+import org.example.demotest.entities.enums.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.lang.Double.*;
-import static org.example.demotest.app_controllers.EmployeeAppController.Numeric10Filter;
+import static org.example.demotest.app_controllers.EmployeeAppController.NumericFilter;
 
 @Controller
 public class ProductAppController {
@@ -61,10 +59,6 @@ public class ProductAppController {
             }
             return null;
         });
-    }
-
-    private TextFormatter<String> createNumeric10Filter() {
-        return Numeric10Filter();
     }
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -118,13 +112,13 @@ public class ProductAppController {
         Weight.setCellValueFactory(new PropertyValueFactory<>("Weight"));
         Cost.setCellValueFactory(new PropertyValueFactory<>("Cost"));
 
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             productTypeField.getItems().setAll(ProductType.values());
             productNameField.setTextFormatter(createAlphaFilter());
             projectIdField.setTextFormatter(createNumericFilter());
             quantityField.setTextFormatter(createNumericFilter());
-            weightField.setTextFormatter(createNumeric10Filter());
-            costField.setTextFormatter(createNumeric10Filter());
+            weightField.setTextFormatter(NumericFilter(10));
+            costField.setTextFormatter(NumericFilter(10));
         }
 
         setupFilters();
@@ -136,7 +130,7 @@ public class ProductAppController {
 
     @FXML
     private void handleCleanButton(){
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             projectIdField.setText("");
             productNameField.setText("");
             deleteIdField.setText("");
@@ -164,7 +158,7 @@ public class ProductAppController {
     @FXML
     private void handleAddProduct(ActionEvent event) {
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN) {
+            if (userRole == Role.ADMIN) {
                 Long projectIdValue = Long.valueOf(projectIdField.getText());
                 Project project = productService.getProjectById(projectIdValue);
 
@@ -200,7 +194,7 @@ public class ProductAppController {
     private void handleTableClick(MouseEvent event) {
         selectedProduct = productTable.getSelectionModel().getSelectedItem();
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedProduct != null) {
                     projectIdField.setText(String.valueOf(selectedProduct.getProjectId()));
                     productNameField.setText(String.valueOf(selectedProduct.getProductName()));
@@ -225,7 +219,7 @@ public class ProductAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestProduct updatedProduct = new ServiceRequestProduct();
                 if (!productNameField.getText().isEmpty()) {
                     updatedProduct.setProductName(productNameField.getText());
@@ -285,7 +279,7 @@ public class ProductAppController {
 
     @FXML
     private void handleDeleteProduct() {
-        if(userRole == org.example.demotest.entities.Role.ADMIN) {
+        if(userRole == Role.ADMIN) {
             Long idText = Long.valueOf(deleteIdField.getText());
 
             Product product = productService.findProductById(idText);

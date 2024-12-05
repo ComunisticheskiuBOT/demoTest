@@ -2,8 +2,10 @@ package org.example.demotest.services;
 
 import lombok.RequiredArgsConstructor;
 import org.example.demotest.dto.ServiceRequestStorage;
+import org.example.demotest.entities.Measurement;
 import org.example.demotest.entities.Product;
 import org.example.demotest.entities.Storage;
+import org.example.demotest.repository.MeasurementRepository;
 import org.example.demotest.repository.ProductRepository;
 import org.example.demotest.repository.StorageRepository;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.Optional;
 public class StorageService {
     private final StorageRepository storageRepository;
     private final ProductRepository productRepository;
+    private final MeasurementRepository measurementRepository;
 
     @Transactional(readOnly = true)
     public List<Storage> findAllStorages(){
@@ -64,6 +67,12 @@ public class StorageService {
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Продукт с ID '" + productId + "' не найден"));
+    }
+
+    @Transactional(readOnly = true)
+    public Measurement getMeasurementById(Long measurementId) {
+        return measurementRepository.findById(measurementId)
+                .orElseThrow(() -> new RuntimeException("Единица измерения с ID '" + measurementId + "' не найдена"));
     }
 
     @Transactional(readOnly = true)

@@ -13,83 +13,87 @@
     </padding>
 
     <StackPane>
-        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+        <HBox spacing="10.0" alignment="BOTTOM_CENTER">
+            <GridPane>
+                <VBox spacing="10.0" alignment="BOTTOM_LEFT">
+                    <GridPane>
 
-            <GridPane hgap="15" vgap="10">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                </rowConstraints>
-                <Label text="ID инспектора:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="ID продукта:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label text="Дата проверки:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Label text="Результат проверки:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                <Label text="Комментарии:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
+                        </columnConstraints>
 
-                <TextField fx:id="inspectorIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <TextField fx:id="productIdField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <TextField fx:id="inspectionDateField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                <ComboBox fx:id="resultTypeField" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="GOOD"/>
-                            <String fx:value="BAD"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-                <TextField fx:id="commentsTimeField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                        <Label  text="Данные качества" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="ID инспектора:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label text="ID продукта:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label text="Дата проверки:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label text="Результат проверки:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <Label text="Комментарии:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <Label text="ID для удаления:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+
+                        <TextField fx:id="inspectorIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <TextField fx:id="productIdField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <TextField fx:id="inspectionDateField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <ComboBox fx:id="resultTypeField" maxWidth="250.0" minWidth="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="GOOD"/>
+                                    <String fx:value="BAD"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <TextField fx:id="commentsTimeField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                        <TextField fx:id="deleteIdField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+
+                    </GridPane>
+
+                    <!--Секция кнопок -->
+
+                    <HBox alignment="CENTER_LEFT">
+                        <Button mnemonicParsing="false" text="Добавить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleAddQuality"/>
+                        <Button mnemonicParsing="false" text="Удалить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleDeleteQuality"/>
+                        <Button mnemonicParsing="false" text="Изменить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleEditQuality"/>
+                        <Button mnemonicParsing="false" text="Обновить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleUpdateQualities"/>
+                        <Button mnemonicParsing="false" text="Очистить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleCleanButton"/>
+                        <Button mnemonicParsing="false" text="Назад" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleBackButton"/>
+                    </HBox>
+
+                    <!--Секция фильтров -->
+
+                    <GridPane alignment="CENTER">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                        </columnConstraints>
+
+                        <Label  text="Фильтры" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <TextField fx:id="idFilter" promptText="Фильтр по ID" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="inspectorIdFilter" promptText="Фильтр по ID инспектора" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="productIdFilter" promptText="Фильтр по ID продукции" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="resultTypeFilter" promptText="По результату" maxWidth="150.0" minWidth="150.0" prefWidth="110.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="GOOD"/>
+                                    <String fx:value="BAD"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </GridPane>
+                </VBox>
             </GridPane>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addQualityButton" mnemonicParsing="false" text="Добавить качество"
-                        onAction="#handleAddQuality"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
-                <TextField fx:id="inspectorIdFilter" promptText="Фильтр по ID инспектора"/>
-                <TextField fx:id="productIdFilter" promptText="Фильтр по ID продукции"/>
-                <ComboBox fx:id="resultTypeFilter">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="ALL"/>
-                            <String fx:value="GOOD"/>
-                            <String fx:value="BAD"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteQualityButton" mnemonicParsing="false" text="Удалить проверку качества"
-                        onAction="#handleDeleteQuality"/>
-                <Button fx:id="updateQualityButton" mnemonicParsing="false" text="Обновить"
-                        onAction="#handleUpdateQualities"/>
-            </HBox>
-
-            <TableView fx:id="qualityTable">
+            <TableView fx:id="qualityTable" onMouseClicked="#handleTableClick">
                 <columns>
-                    <TableColumn text="ID" fx:id="QualityId"/>
-                    <TableColumn text="ID сотрудника-инспектора" fx:id="InspectorId"/>
-                    <TableColumn text="ID продукта" fx:id="ProductId"/>
-                    <TableColumn text="Дата проверки" fx:id="InspectionDate"/>
-                    <TableColumn text="Результат" fx:id="ResulT"/>
-                    <TableColumn text="Комментарии" fx:id="Comments"/>
+                    <TableColumn text="ID" maxWidth="80.0" minWidth="80.0" fx:id="QualityId"/>
+                    <TableColumn text="ID сотрудника" maxWidth="150.0" minWidth="150.0" fx:id="InspectorId"/>
+                    <TableColumn text="ID продукта" maxWidth="150.0" minWidth="150.0" fx:id="ProductId"/>
+                    <TableColumn text="Дата проверки" maxWidth="150.0" minWidth="150.0" fx:id="InspectionDate"/>
+                    <TableColumn text="Результат" maxWidth="150.0" minWidth="150.0" fx:id="ResulT"/>
+                    <TableColumn text="Комментарии" maxWidth="150.0" minWidth="150.0" fx:id="Comments"/>
                 </columns>
             </TableView>
 
-        </VBox>
+        </HBox>
     </StackPane>
 </StackPane>

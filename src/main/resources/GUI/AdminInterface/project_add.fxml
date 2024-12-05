@@ -13,89 +13,96 @@
     </padding>
 
     <StackPane>
-        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+        <HBox spacing="10.0" alignment="BOTTOM_CENTER">
+            <GridPane>
+                <VBox spacing="10.0" alignment="BOTTOM_LEFT">
 
-            <GridPane hgap="15" vgap="10">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                </rowConstraints>
-                <Label text="ID сотрудника:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="Наименование проекта:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label text="Чертёж:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Label text="Тип материала:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                <Label text="Ожидаемое время:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                <Label text="Описание проекта:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                    <!--Секция проекта -->
 
-                <TextField fx:id="engineerIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <TextField fx:id="projectNameField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <TextField fx:id="drawingField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                <ComboBox fx:id="materialTypeField" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="TUBE"/>
-                            <String fx:value="PLATE"/>
-                            <String fx:value="SHEET"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-                <TextField fx:id="expectedTimeField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-                <TextField fx:id="projectDescriptionField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                    <GridPane alignment="CENTER">
+
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="250.0" minWidth="100.0" prefWidth="200.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="250.0" minWidth="100.0" prefWidth="200.0"/>
+                        </columnConstraints>
+
+                        <Label  text="Данные проекта" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="ID сотрудника:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label text="Наименование проекта:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label text="Чертёж:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label text="Тип материала:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <Label text="Ожидаемое время:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <Label text="Описание проекта:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                        <Label text="ID для удаления:" GridPane.columnIndex="0" GridPane.rowIndex="9"/>
+
+                        <TextField fx:id="engineerIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <TextField fx:id="projectNameField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <TextField fx:id="drawingField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <ComboBox fx:id="materialTypeField" maxWidth="250.0" minWidth="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="TUBE"/>
+                                    <String fx:value="PLATE"/>
+                                    <String fx:value="SHEET"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <TextField fx:id="expectedTimeField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                        <TextField fx:id="projectDescriptionField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                        <TextField fx:id="deleteIdField" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                    </GridPane>
+
+                    <!--Секция кнопок -->
+
+                    <HBox alignment="CENTER">
+                        <Button mnemonicParsing="false" text="Добавить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleAddProject"/>
+                        <Button mnemonicParsing="false" text="Удалить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleDeleteProject"/>
+                        <Button mnemonicParsing="false" text="Изменить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleEditProject"/>
+                        <Button mnemonicParsing="false" text="Обновить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleUpdateProjects"/>
+                        <Button mnemonicParsing="false" text="Очистить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleCleanButton"/>
+                        <Button mnemonicParsing="false" text="Назад" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleBackButton"/>
+                    </HBox>
+
+                    <!--Секция фильтров -->
+
+                    <GridPane alignment="CENTER">
+
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                        </columnConstraints>
+
+                        <Label  text="Фильтры" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <TextField fx:id="idFilter" GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="По ID"/>
+                        <TextField fx:id="projectNameFilter" GridPane.columnIndex="0" GridPane.rowIndex="2" promptText="По наименованию"/>
+                        <TextField fx:id="drawingFilter" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="По чертежу"/>
+                        <ComboBox fx:id="materialTypeFilter" maxWidth="150.0" minWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" promptText="По типу материал">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="TUBE"/>
+                                    <String fx:value="PLATE"/>
+                                    <String fx:value="SHEET"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+
+                    </GridPane>
+                </VBox>
             </GridPane>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addProjectButton" mnemonicParsing="false" text="Добавить проект"
-                        onAction="#handleAddProject"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
-                <TextField fx:id="projectNameFilter" promptText="Фильтр по наименованию"/>
-                <TextField fx:id="drawingFilter" promptText="Фильтр по чертежу"/>
-                <ComboBox fx:id="materialTypeFilter">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="ALL"/>
-                            <String fx:value="TUBE"/>
-                            <String fx:value="PLATE"/>
-                            <String fx:value="SHEET"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteProjectButton" mnemonicParsing="false" text="Удалить проекта"
-                        onAction="#handleDeleteProject"/>
-                <Button fx:id="updateProjectButton" mnemonicParsing="false" text="Обновить"
-                        onAction="#handleUpdateProjects"/>
-            </HBox>
-
-            <TableView fx:id="projectTable">
+            <TableView fx:id="projectTable" onMouseClicked="#handleTableClick">
                 <columns>
-                    <TableColumn text="ID" fx:id="ProjectId"/>
-                    <TableColumn text="ID сотрудника-инженера" fx:id="EngineerId"/>
-                    <TableColumn text="Наименование проекта" fx:id="ProjectName"/>
-                    <TableColumn text="Чертёж" fx:id="Drawing"/>
-                    <TableColumn text="Тип Материала" fx:id="MateriaLType"/>
-                    <TableColumn text="Ожидаемое время" fx:id="ExpectedTime"/>
-                    <TableColumn text="Описание проекта" fx:id="ProjectDescription"/>
+                    <TableColumn text="ID" maxWidth="80.0" minWidth="80.0" fx:id="ProjectId"/>
+                    <TableColumn text="ID сотрудника" maxWidth="150.0" minWidth="150.0" fx:id="EngineerId"/>
+                    <TableColumn text="Наименование проекта" maxWidth="150.0" minWidth="150.0" fx:id="ProjectName"/>
+                    <TableColumn text="Чертёж" maxWidth="80.0" minWidth="80.0" fx:id="Drawing"/>
+                    <TableColumn text="Тип Материала" maxWidth="150.0" minWidth="150.0" fx:id="MateriaLType"/>
+                    <TableColumn text="Ожидаемое время" maxWidth="150.0" minWidth="150.0" fx:id="ExpectedTime"/>
+                    <TableColumn text="Описание проекта" maxWidth="150.0" minWidth="150.0" fx:id="ProjectDescription"/>
                 </columns>
             </TableView>
 
-        </VBox>
+        </HBox>
     </StackPane>
 </StackPane>

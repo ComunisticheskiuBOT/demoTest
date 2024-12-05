@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestDepartment;
 import org.example.demotest.entities.Department;
-import org.example.demotest.entities.Role;
+import org.example.demotest.entities.enums.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.DepartmentService;
 import org.example.demotest.services.EmployeeService;
@@ -129,7 +129,7 @@ public class DepartmentAppController {
     @FXML
     private void handleAddDepartment(ActionEvent event) {
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN) {
+            if(userRole == Role.ADMIN) {
 
                 ServiceRequestDepartment newClient = ServiceRequestDepartment.builder()
                         .departmentName(departmentName.getText())
@@ -172,7 +172,7 @@ public class DepartmentAppController {
 
     @FXML
     private void handleDeleteDepartment() {
-        if (userRole == org.example.demotest.entities.Role.ADMIN) {
+        if (userRole == Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 
@@ -191,7 +191,7 @@ public class DepartmentAppController {
     private void handleTableClick(MouseEvent event) {
         selectedDepartment = departmentTable.getSelectionModel().getSelectedItem();
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedDepartment != null) {
                     departmentName.setText(selectedDepartment.getDepartmentName());
                     locAtion.setText(selectedDepartment.getLocation());
@@ -211,7 +211,7 @@ public class DepartmentAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestDepartment updatedDepartment = getServiceRequestDepartment();
 
                 Optional<Department> updated = departmentService.updatedDepartment(selectedDepartment.getDepartmentId(), updatedDepartment);

@@ -13,6 +13,9 @@ import javafx.stage.Stage;
 
 import org.example.demotest.dto.ServiceRequestQuality;
 import org.example.demotest.entities.*;
+import org.example.demotest.entities.enums.Result;
+import org.example.demotest.entities.enums.Role;
+import org.example.demotest.entities.enums.Status;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
 import org.example.demotest.services.ProductService;
@@ -112,7 +115,7 @@ public class QualityAppController {
         ResulT.setCellValueFactory(new PropertyValueFactory<>("Result"));
         Comments.setCellValueFactory(new PropertyValueFactory<>("Comments"));
 
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             resultTypeField.getItems().setAll(Result.values());
             inspectorIdField.setTextFormatter(createNumericFilter());
             productIdField.setTextFormatter(createNumericFilter());
@@ -128,7 +131,7 @@ public class QualityAppController {
 
     @FXML
     private void handleCleanButton(){
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             inspectorIdField.setText(null);
             productIdField.setText(null);
             inspectionDateField.setText(null);
@@ -155,7 +158,7 @@ public class QualityAppController {
     @FXML
     private void handleAddQuality(ActionEvent event) {
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN) {
+            if (userRole == Role.ADMIN) {
 
                 Long productIdValue = Long.valueOf(productIdField.getText());
                 Product product = qualityService.getProductById(productIdValue);
@@ -207,7 +210,7 @@ public class QualityAppController {
         selectedQuality = qualityTable.getSelectionModel().getSelectedItem();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedQuality != null) {
                     productIdField.setText(String.valueOf(selectedQuality.getProduct().getProductId()));
                     inspectorIdField.setText(String.valueOf(selectedQuality.getInspector().getId()));
@@ -229,7 +232,7 @@ public class QualityAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestQuality updatedQuality = new ServiceRequestQuality();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date inspectionDate = sdf.parse(inspectionDateField.getText());
@@ -292,7 +295,7 @@ public class QualityAppController {
 
     @FXML
     private void handleDeleteQuality() {
-        if (userRole == org.example.demotest.entities.Role.ADMIN) {
+        if (userRole == Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 

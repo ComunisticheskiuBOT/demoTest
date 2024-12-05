@@ -7,6 +7,8 @@ import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.EmployeeService;
 import org.springframework.stereotype.Component;
 
+import static org.example.demotest.app_controllers.EmployeeAppController.NumericFilter;
+
 @Component
 public class LoginController {
     @FXML public TextField user;
@@ -20,7 +22,10 @@ public class LoginController {
     public LoginController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
-    public void initialize() {}
+
+    public void initialize() {
+        user.setTextFormatter(NumericFilter(10));
+    }
 
     public void initManager(final LoginManager loginManager) {
         loginButton.setOnAction(event -> {

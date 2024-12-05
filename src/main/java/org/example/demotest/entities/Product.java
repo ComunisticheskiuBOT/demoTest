@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.example.demotest.entities.enums.ProductType;
+
 @Data
 @SuperBuilder
 @AllArgsConstructor

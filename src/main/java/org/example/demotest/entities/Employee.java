@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.example.demotest.entities.enums.Role;
+import org.example.demotest.entities.enums.Status;
 
 import java.util.Date;
 @Data
@@ -28,6 +30,10 @@ public class Employee {
     private Date birthDate;
     @Column(name = "passport_number")
     private Long passportNumber;
+    @Column(name = "inn")
+    private Long inn;
+    @Column(name = "snils")
+    private Long snils;
     @Column(name = "address")
     private String address;
     @Column(name = "phone_number")

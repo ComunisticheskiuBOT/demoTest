@@ -23,6 +23,7 @@ public class MainViewController {
     @FXML private Button productsButton;
     @FXML private Button qualitiesButton;
     @FXML private Button storagesButton;
+    @FXML private Button measurementsButton;
     @FXML private Label  sessionLabel;
 
 
@@ -68,4 +69,8 @@ public class MainViewController {
     public void initStoragesWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
         storagesButton.setOnAction(event -> mainViewManager.storages(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
     }
+
+//    public void initMeasurementsWindow(final MainViewManager mainViewManager, Long userPassport, ApplicationContext applicationContext) {
+//        measurementsButton.setOnAction(event -> mainViewManager.measurements(userPassport, applicationContext.getBean(EmployeeService.class).getEmployeeByPassport(userPassport).get().getRole()));
+//    }
 }

@@ -18,7 +18,7 @@
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="companyNameFilter" promptText="Фильтр по наименованию"/>
                 <TextField fx:id="contactPersonFilter" promptText="Фильтр по контакту"/>
-                <ComboBox fx:id="reputationFilter">
+                <ComboBox fx:id="reputationFilter" promptText="По репутации">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="ALL"/>

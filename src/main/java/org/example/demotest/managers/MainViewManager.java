@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.demotest.app_controllers.*;
-import org.example.demotest.entities.Role;
+import org.example.demotest.entities.enums.Role;
 import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
@@ -38,6 +38,7 @@ public class MainViewManager {
     public  void products(Long userPassport, Role role) { showProductWindow(userPassport, role); }
     public  void qualities(Long userPassport, Role role) { showQualityWindow(userPassport, role); }
     public void storages(Long userPassport, Role role) { showStorageWindow(userPassport, role); }
+    public void measurements(Long userPassport, Role role) { showMeasurementWindow(userPassport, role); }
 
     private void showEmployeeWindow(Long userPassport, Role role) {
 
@@ -46,7 +47,7 @@ public class MainViewManager {
                 FXMLLoader loader = new FXMLLoader(
                         getClass().getResource("/GUI/AdminInterface/employee_add.fxml")
                 );
-                employeeWindow(userPassport, loader, 800);
+                employeeWindow(userPassport, loader, 870);
             }
             else if(role == Role.MODERATOR) {
                 FXMLLoader loader = new FXMLLoader(
@@ -70,7 +71,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 1480, w);
+        Scene scene = new Scene(root, 1900, w);
         stage.setTitle("Панель управления сотрудниками");
         stage.setScene(scene);
         stage.show();
@@ -110,7 +111,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 1450, 400);
         stage.setTitle("Панель управления клиентами");
         stage.setScene(scene);
         stage.show();
@@ -150,7 +151,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 500, 575);
+        Scene scene = new Scene(root, 970, 350);
         stage.setTitle("Панель управления отделами");
         stage.setScene(scene);
         stage.show();
@@ -189,7 +190,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 1500, 350);
         stage.setTitle("Панель управления заказами");
         stage.setScene(scene);
         stage.show();
@@ -227,7 +228,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 1350, 350);
         stage.setTitle("Панель управления проектами");
         stage.setScene(scene);
         stage.show();
@@ -265,7 +266,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 1200, 400);
         stage.setTitle("Панель управления продуктами");
         stage.setScene(scene);
         stage.show();
@@ -303,7 +304,7 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 400, 500);
+        Scene scene = new Scene(root, 1150, 350);
         stage.setTitle("Панель управления складом");
         stage.setScene(scene);
         stage.show();
@@ -342,11 +343,50 @@ public class MainViewManager {
         loader.setControllerFactory(applicationContext::getBean);
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 1200, 350);
         stage.setTitle("Панель управления качеством");
         stage.setScene(scene);
         stage.show();
         QualityAppController controller = loader.getController();
+        loader.setControllerFactory(applicationContext::getBean);
+        controller.initialize(userPassport);
+    }
+
+    private void showMeasurementWindow(Long userPassport, Role role) {
+
+        try {
+            if (role == Role.ADMIN) {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/GUI/AdminInterface/measurement_add.fxml")
+                );
+                measurementWindow(userPassport, loader);
+            }
+            else if (role == Role.MODERATOR) {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/GUI/ModeratorInterface/measurement_edit.fxml")
+                );
+                measurementWindow(userPassport, loader);
+            }
+            else if (role == Role.USER) {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/GUI/UserInterface/measurement_check.fxml")
+                );
+                measurementWindow(userPassport, loader);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MainViewManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void measurementWindow(Long userPassport, FXMLLoader loader) throws IOException {
+        loader.setControllerFactory(applicationContext::getBean);
+        Parent root = loader.load();
+
+        Scene scene = new Scene(root, 750, 250);
+        stage.setTitle("Панель управления измерениями");
+        stage.setScene(scene);
+        stage.show();
+        MeasurementAppController controller = loader.getController();
         loader.setControllerFactory(applicationContext::getBean);
         controller.initialize(userPassport);
     }

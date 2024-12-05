@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demotest.entities.Employee;
 import org.example.demotest.entities.Product;
-import org.example.demotest.entities.Result;
+import org.example.demotest.entities.enums.Result;
 
 import java.io.Serial;
 import java.io.Serializable;

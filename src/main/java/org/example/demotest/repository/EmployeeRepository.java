@@ -10,7 +10,8 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Employee findEmployeeById(Long id);
     Optional<Employee> findByPassportNumber(Long passportNumber);
+    Optional<Employee> findByInn(Long inn);
+    Optional<Employee> findBySnils(Long snils);
     Employee findByPassportNumberAndPassWord(Long passportNumber, String password);
-
     Optional<Employee> findByPhoneNumber(String phoneNumber);
 }

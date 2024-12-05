@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.demotest.entities.Department;
-import org.example.demotest.entities.Role;
-import org.example.demotest.entities.Status;
+import org.example.demotest.entities.enums.Role;
+import org.example.demotest.entities.enums.Status;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -26,6 +26,8 @@ public class ServiceRequestEmployee implements Serializable {
     private String lastName;
     private Date birthDate;
     private Long passportNumber;
+    private Long inn;
+    private Long snils;
     private String address;
     private String phoneNumber;
     private String email;

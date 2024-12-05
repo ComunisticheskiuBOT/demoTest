@@ -12,8 +12,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestStorage;
 import org.example.demotest.entities.*;
+import org.example.demotest.entities.enums.Role;
 import org.example.demotest.managers.LoginManager;
+import org.example.demotest.managers.MainViewManager;
 import org.example.demotest.services.EmployeeService;
+import org.example.demotest.services.MeasurementService;
 import org.example.demotest.services.ProductService;
 import org.example.demotest.services.StorageService;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.example.demotest.app_controllers.EmployeeAppController.DateFilter;
+import static org.example.demotest.app_controllers.EmployeeAppController.NumericFilter;
 
 @Controller
 public class StorageAppController {
@@ -36,12 +40,15 @@ public class StorageAppController {
     private final ApplicationContext applicationContext;
     private final EmployeeService employeeService;
     private final ProductService productService;
+    private final MeasurementService measurementService;
+
     private final StorageService storageService;
 
-    public StorageAppController(EmployeeService employeeService, StorageService storageService,  ProductService productService, ApplicationContext applicationContext){
+    public StorageAppController(EmployeeService employeeService, StorageService storageService, MeasurementService measurementService, ProductService productService, ApplicationContext applicationContext){
         this.employeeService = employeeService;
         this.storageService = storageService;
         this.productService = productService;
+        this.measurementService = measurementService;
         this.applicationContext = applicationContext;
     }
 
@@ -54,33 +61,40 @@ public class StorageAppController {
         });
     }
 
+    private TextFormatter<String> createAlphaFilter() {
+        return new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty() || newText.matches("[a-zA-Zа-яА-ЯёЁ]+")) {
+                return change;
+            }
+            return null;
+        });
+    }
+
     private TextFormatter<String> createDateFilter() {
         return DateFilter();
     }
-
     private final RestTemplate restTemplate = new RestTemplate();
     private final String url = "http://localhost:8080/storage-api/v1/storages";
 
     //Таблица
     @FXML private TableView<Storage> storageTable;
     @FXML private TableColumn<Storage, Long> StorageId;
+    @FXML private TableColumn<Storage, String> StorageName;
     @FXML private TableColumn<Storage, Long> ProductId;
-    @FXML private TableColumn<Storage, Date> ArrivalDate;
+    @FXML private TableColumn<Storage, String> ProductName;
     @FXML private TableColumn<Storage, Integer> Quantity;
-
+    @FXML private TableColumn<Storage, String> MeasurementName;
+    @FXML private TableColumn<Storage, Date> ArrivalDate;
 
     //Поля для создания пользователя
-    @FXML private TextField storageIdField;
-    @FXML private TextField productIdField;
-    @FXML private TextField arrivalDateField;
-    @FXML private TextField quantityField;
+    @FXML private TextField storageNameField, measurementField, productIdField, arrivalDateField, quantityField;
 
     //Поля для удаления пользователя
     @FXML private TextField deleteIdField;
 
     //Фильтры
-    @FXML private TextField idFilter;
-    @FXML private TextField productIdFilter;
+    @FXML private TextField idFilter, productIdFilter, measurementFilter, productNameFilter, storageNameFilter;
     ObservableList<Storage> observableStoragesList = FXCollections.observableArrayList();
 
     private Long userPassport;
@@ -101,8 +115,8 @@ public class StorageAppController {
         ArrivalDate.setCellValueFactory(new PropertyValueFactory<>("ArrivalDate"));
         Quantity.setCellValueFactory(new PropertyValueFactory<>("Quantity"));
 
-        if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            storageIdField.setTextFormatter(createNumericFilter());
+        if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
+            storageNameField.setTextFormatter(createAlphaFilter());
             productIdField.setTextFormatter(createNumericFilter());
             arrivalDateField.setTextFormatter(createDateFilter());
         }
@@ -116,11 +130,12 @@ public class StorageAppController {
 
     @FXML
     private void handleCleanButton(){
-        if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            storageIdField.setText("");
+        if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
+            storageNameField.setText("");
             productIdField.setText("");
+
             arrivalDateField.setText("");
-            if(userRole == org.example.demotest.entities.Role.ADMIN) deleteIdField.setText(null);
+            if (userRole == Role.ADMIN) deleteIdField.setText(null);
             quantityField.setText("");
         }
     }
@@ -142,7 +157,7 @@ public class StorageAppController {
     @FXML
     private void handleAddStorages(ActionEvent event) {
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN) {
+            if(userRole == Role.ADMIN) {
 
                 Long productIdValue = Long.valueOf(productIdField.getText());
                 Product product = storageService.getProductById(productIdValue);
@@ -152,13 +167,23 @@ public class StorageAppController {
                     return;
                 }
 
+                Long measurementIdValue = Long.valueOf(productIdField.getText());
+                Measurement measurement = storageService.getMeasurementById(measurementIdValue);
+
+                if (measurement == null) {
+                    System.out.println("Единица измерения с указанным ID не найден.");
+                    return;
+                }
+
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date arrivalDate = sdf.parse(arrivalDateField.getText());
 
                 ServiceRequestStorage newStorage = ServiceRequestStorage.builder()
-                        .storageId(Long.valueOf(storageIdField.getText()))
+                        .storageName(String.valueOf(storageNameField))
                         .product(product)
+                        .productName(String.valueOf(product.getProductName()))
                         .arrivalDate(arrivalDate)
+                        .measurement(measurement)
                         .quantity(Integer.valueOf(quantityField.getText()))
                         .build();
                 Storage storageCreated = restTemplate.postForObject(url, newStorage, Storage.class);
@@ -180,11 +205,12 @@ public class StorageAppController {
         selectedStorage = storageTable.getSelectionModel().getSelectedItem();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedStorage != null) {
-                    storageIdField.setText(String.valueOf(selectedStorage.getStorageId()));
+                    storageNameField.setText(String.valueOf(selectedStorage.getStorageName()));
                     productIdField.setText(String.valueOf(selectedStorage.getProduct().getProductId()));
                     quantityField.setText(String.valueOf(selectedStorage.getQuantity()));
+                    measurementField.setText(String.valueOf(selectedStorage.getMeasurements()));
                     arrivalDateField.setText(sdf.format(selectedStorage.getArrivalDate()));
                 }
             }
@@ -203,19 +229,22 @@ public class StorageAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestStorage updatedStorage = new ServiceRequestStorage();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date parsedArrivalDate = sdf.parse(arrivalDateField.getText());
 
-                if (!storageIdField.getText().isEmpty()) {
-                    updatedStorage.setStorageId(Long.valueOf(storageIdField.getText()));
+                if (!storageNameField.getText().isEmpty()) {
+                    updatedStorage.setStorageId(Long.valueOf(storageNameField.getText()));
                 }
                 if (!productIdField.getText().isEmpty()) {
                     updatedStorage.setProduct(productService.findProductById(Long.valueOf(productIdField.getText())));
                 }
                 if (!quantityField.getText().isEmpty()) {
                     updatedStorage.setQuantity(Integer.valueOf(quantityField.getText()));
+                }
+                if (!measurementField.getText().isEmpty()) {
+                    updatedStorage.setMeasurement(measurementService.findMeasurementByName(String.valueOf(measurementField.getText())));
                 }
                 if (arrivalDateField.getText() != null) {
                     updatedStorage.setArrivalDate(parsedArrivalDate);
@@ -239,24 +268,32 @@ public class StorageAppController {
     }
 
     private void setupFilters() {
+        measurementFilter.setTextFormatter(createAlphaFilter());
+        productNameFilter.setTextFormatter(createAlphaFilter());
+        storageNameFilter.setTextFormatter(createAlphaFilter());
+        productIdFilter.setTextFormatter(NumericFilter(1000));
+
         idFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
         productIdFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        measurementFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        productNameFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
+        storageNameFilter.textProperty().addListener((observable, oldValue, newValue) -> applyFilters());
     }
 
     private void applyFilters() {
         String id = idFilter.getText();
         String productId = productIdFilter.getText();
 
-        storageTable.setItems(observableStoragesList.filtered(quality -> {
-            boolean matchesId = id.isEmpty() || String.valueOf(quality.getStorageId()).contains(id);
-            boolean matchesProductId = productId.isEmpty() || String.valueOf(quality.getProductId()).contains(productId);
+        storageTable.setItems(observableStoragesList.filtered(storage -> {
+            boolean matchesId = id.isEmpty() || String.valueOf(storage.getStorageId()).contains(id);
+            boolean matchesProductId = productId.isEmpty() || String.valueOf(storage.getProductId()).contains(productId);
             return matchesId && matchesProductId;
         }));
     }
 
     @FXML
     private void handleDeleteStorage() {
-        if(userRole == org.example.demotest.entities.Role.ADMIN) {
+        if(userRole == Role.ADMIN) {
             Long idText = Long.valueOf(deleteIdField.getText());
 
             Storage storage = storageService.findStorageById(idText);
@@ -268,7 +305,12 @@ public class StorageAppController {
             }
         }
     }
-
+    @FXML
+    public void handleMeasurementButton(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        MainViewManager mainViewManager = new MainViewManager(stage, applicationContext);
+        mainViewManager.measurements(userPassport, userRole);
+    }
     @FXML
     public void handleBackButton(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

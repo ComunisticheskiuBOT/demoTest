@@ -13,87 +13,91 @@
     </padding>
 
     <StackPane>
-        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
+        <HBox spacing="10.0" alignment="BOTTOM_CENTER">
+            <GridPane>
+                <VBox spacing="10.0" alignment="BOTTOM_LEFT">
 
-            <GridPane hgap="15" vgap="10">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                </rowConstraints>
-                <Label text="ID проекта:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="Наименование продукта:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label text="Тип продукта:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Label text="Количество продукта:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                <Label text="Масса продукта:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
-                <Label text="Цена продукта:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                    <!--Секция продукта -->
 
-                <TextField fx:id="projectIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <TextField fx:id="productNameField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <ComboBox fx:id="productTypeField" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="COMPOSITE"/>
-                            <String fx:value="SOLID"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-                <TextField fx:id="quantityField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                    <GridPane alignment="CENTER">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                        </columnConstraints>
 
-                <TextField fx:id="weightField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-                <TextField fx:id="costField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                        <Label  text="Данные проекта" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="ID проекта:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label text="Наименование продукта:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label text="Тип продукта:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label text="Количество:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <Label text="Масса продукта:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                        <Label text="Цена продукта:" GridPane.columnIndex="0" GridPane.rowIndex="7"/>
+                        <Label text="ID для удаления:" GridPane.columnIndex="0" GridPane.rowIndex="8"/>
+
+                        <TextField fx:id="projectIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <TextField fx:id="productNameField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <ComboBox fx:id="productTypeField" maxWidth="250.0" minWidth="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="COMPOSITE"/>
+                                    <String fx:value="SOLID"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <TextField fx:id="quantityField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                        <TextField fx:id="weightField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                        <TextField fx:id="costField" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+                        <TextField fx:id="deleteIdField" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                    </GridPane>
+
+                    <!--Секция кнопок -->
+
+                    <HBox alignment="CENTER">
+                        <Button mnemonicParsing="false" text="Добавить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleAddProduct"/>
+                        <Button mnemonicParsing="false" text="Удалить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleDeleteProduct"/>
+                        <Button mnemonicParsing="false" text="Изменить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleEditProduct"/>
+                        <Button mnemonicParsing="false" text="Обновить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleUpdateProducts"/>
+                        <Button mnemonicParsing="false" text="Очистить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleCleanButton"/>
+                        <Button mnemonicParsing="false" text="Назад" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleBackButton"/>
+                    </HBox>
+
+                    <!--Секция фильтров -->
+
+                    <GridPane alignment="CENTER">
+
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                        </columnConstraints>
+
+                        <Label  text="Фильтры" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <TextField fx:id="idFilter" promptText="Фильтр по ID" GridPane.columnSpan="2" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="productNameFilter" promptText="Фильтр по наименованию" GridPane.columnSpan="2" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <ComboBox fx:id="productTypeFilter" promptText="По типу продукта" maxWidth="300.0" minWidth="300.0" prefWidth="150.0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="COMPOSITE"/>
+                                    <String fx:value="SOLID"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                    </GridPane>
+                </VBox>
             </GridPane>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="addProductButton" mnemonicParsing="false" text="Добавить продукт"
-                        onAction="#handleAddProduct"/>
-                <Button fx:id="handleCleanButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
-                <TextField fx:id="productNameFilter" promptText="Фильтр по наименованию"/>
-                <ComboBox fx:id="productTypeFilter">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="ALL"/>
-                            <String fx:value="COMPOSITE"/>
-                            <String fx:value="SOLID"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-            </HBox>
-
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="deleteIdField" promptText="ID для удаления"/>
-                <Button fx:id="deleteProductButton" mnemonicParsing="false" text="Удалить продукт"
-                        onAction="#handleDeleteProduct"/>
-                <Button fx:id="updateProductButton" mnemonicParsing="false" text="Обновить"
-                        onAction="#handleUpdateProducts"/>
-            </HBox>
-
-            <TableView fx:id="productTable">
+            <TableView fx:id="productTable" onMouseClicked="#handleTableClick">
                 <columns>
                     <TableColumn text="ID" fx:id="ProductId"/>
                     <TableColumn text="ID проекта" fx:id="ProjectId"/>
-                    <TableColumn text="Наименование продукта" fx:id="ProductName"/>
-                    <TableColumn text="Тип продукта" fx:id="ProducTType"/>
-                    <TableColumn text="Кол-во" fx:id="Quantity"/>
+                    <TableColumn text="Наименование продукта"  maxWidth="200.0" minWidth="200.0" fx:id="ProductName"/>
+                    <TableColumn text="Тип продукта" maxWidth="150.0" minWidth="150.0" fx:id="ProducTType"/>
+                    <TableColumn text="Количество" maxWidth="150.0" minWidth="150.0" fx:id="Quantity"/>
                     <TableColumn text="Масса" fx:id="Weight"/>
                     <TableColumn text="Цена" fx:id="Cost"/>
                 </columns>
             </TableView>
 
-        </VBox>
+        </HBox>
     </StackPane>
 </StackPane>

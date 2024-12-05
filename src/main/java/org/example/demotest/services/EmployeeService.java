@@ -65,6 +65,17 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<Employee> findEmployeeByInn(Long passportNumber) {
+        return employeeRepository.findByInn(passportNumber);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Employee> findEmployeeBySnils(Long passportNumber) {
+        return employeeRepository.findBySnils(passportNumber);
+    }
+
+
+    @Transactional(readOnly = true)
     public Optional<Employee> findEmployeeByPhoneNumber(String phoneNumber) {
         return employeeRepository.findByPhoneNumber(phoneNumber);
     }
@@ -105,6 +116,12 @@ public class EmployeeService {
             }
             if (updatedEmployee.getPassportNumber() != null) {
                 employee.setPassportNumber(updatedEmployee.getPassportNumber());
+            }
+            if (updatedEmployee.getInn() != null) {
+                employee.setInn(updatedEmployee.getInn());
+            }
+            if (updatedEmployee.getSnils() != null) {
+                employee.setSnils(updatedEmployee.getSnils());
             }
             if (updatedEmployee.getAddress() != null) {
                 employee.setAddress(updatedEmployee.getAddress());

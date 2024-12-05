@@ -18,7 +18,7 @@
                 <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
                 <TextField fx:id="projectNameFilter" promptText="Фильтр по наименованию"/>
                 <TextField fx:id="drawingFilter" promptText="Фильтр по чертежу"/>
-                <ComboBox fx:id="materialTypeFilter">
+                <ComboBox fx:id="materialTypeFilter" promptText="По типу материала">
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="ALL"/>

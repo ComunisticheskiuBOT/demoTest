@@ -11,8 +11,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestClient;
 import org.example.demotest.entities.Client;
-import org.example.demotest.entities.Reputation;
-import org.example.demotest.entities.Role;
+import org.example.demotest.entities.enums.Reputation;
+import org.example.demotest.entities.enums.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.ClientService;
 import org.example.demotest.services.EmployeeService;
@@ -101,8 +101,8 @@ public class ClientAppController {
         Address.setCellValueFactory(new PropertyValueFactory<>("Address"));
         Reputation.setCellValueFactory(new PropertyValueFactory<>("Reputation"));
 
-        if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            reputationComboBox.getItems().setAll(org.example.demotest.entities.Reputation.values());
+        if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
+            reputationComboBox.getItems().setAll(org.example.demotest.entities.enums.Reputation.values());
             companyNameFilter.setTextFormatter(createAlphaFilter());
             contactPersonFilter.setTextFormatter(createAlphaFilter());
             phoneNumber.setTextFormatter(createPhoneFilter());
@@ -119,7 +119,7 @@ public class ClientAppController {
 
     @FXML
     private void handleCleanButton(){
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             companyName.setText("");
             contactPerson.setText("");
             phoneNumber.setText("");
@@ -146,7 +146,7 @@ public class ClientAppController {
     @FXML
     private void handleAddClient(ActionEvent event) {
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN) {
+            if(userRole == Role.ADMIN) {
 
                 ServiceRequestClient newClient = ServiceRequestClient.builder()
                         .companyName(companyName.getText())
@@ -174,7 +174,7 @@ public class ClientAppController {
     private void handleTableClick(MouseEvent event) {
         selectedClient = clientTable.getSelectionModel().getSelectedItem();
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedClient != null) {
                     companyName.setText(selectedClient.getCompanyName());
                     contactPerson.setText(selectedClient.getContactPerson());
@@ -199,7 +199,7 @@ public class ClientAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestClient updatedClient = getServiceRequestClient();
 
                 Optional<Client> updated = clientService.updatedClient(selectedClient.getClientId(), updatedClient);
@@ -275,7 +275,7 @@ public class ClientAppController {
 
     @FXML
     private void handleDeleteClient() {
-        if (userRole == org.example.demotest.entities.Role.ADMIN) {
+        if (userRole == Role.ADMIN) {
             Long idText = Long.valueOf(deleteIdField.getText());
 
             Client client = clientService.findClientById(idText);

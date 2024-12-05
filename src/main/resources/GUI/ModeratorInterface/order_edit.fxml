@@ -12,85 +12,92 @@
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
     </padding>
     <StackPane>
-        <VBox spacing="10.0" alignment="BOTTOM_CENTER">
-
+        <HBox spacing="10.0" alignment="BOTTOM_CENTER">
             <GridPane>
-                <columnConstraints>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
-                    <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="5.0" prefHeight="5.0" vgrow="NEVER"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                    <RowConstraints minHeight="15.0" prefHeight="50.0" vgrow="ALWAYS"/>
-                </rowConstraints>
-                <Label text="ID клиента:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Label text="ID проекта:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Label text="Дата заказа:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Label text="Дата исполнения:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Label text="Статус заказа:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                <Label text="Описание заказа:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                <VBox spacing="10.0" alignment="BOTTOM_LEFT">
 
-                <TextField fx:id="clientIdField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <TextField fx:id="projectIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <TextField fx:id="dateOfOrderField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <TextField fx:id="dateOfExecutionField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                <ComboBox fx:id="statusComboBoxField" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="IN_PROCESS"/>
-                            <String fx:value="DELAYED"/>
-                            <String fx:value="APPROVED"/>
-                            <String fx:value="CANCELED"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-                <TextField fx:id="orderDescription" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                     <!--Секция заказа -->
+
+                    <GridPane>
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="148.0" minWidth="100.0" prefWidth="109.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="228.0" minWidth="100.0" prefWidth="189.0"/>
+                        </columnConstraints>
+
+                        <Label  text="Данные заказа" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label text="ID клиента:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Label text="ID проекта:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Label text="Дата заказа:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Label text="Дата исполнения:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Label text="Статус заказа:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                        <Label text="Описание заказа:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+
+                        <TextField fx:id="clientIdField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <TextField fx:id="projectIdField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <TextField fx:id="dateOfOrderField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <TextField fx:id="dateOfExecutionField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        <ComboBox fx:id="statusComboBoxField" maxWidth="250.0" minWidth="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="IN_PROCESS"/>
+                                    <String fx:value="DELAYED"/>
+                                    <String fx:value="APPROVED"/>
+                                    <String fx:value="CANCELED"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+                        <TextField fx:id="orderDescription" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                    </GridPane>
+
+                    <!--Секция кнопок -->
+
+                    <HBox alignment="CENTER_LEFT">
+                        <Button mnemonicParsing="false" text="Изменить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleEditOrder"/>
+                        <Button mnemonicParsing="false" text="Обновить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleUpdateOrders"/>
+                        <Button mnemonicParsing="false" text="Очистить" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleCleanButton"/>
+                        <Button mnemonicParsing="false" text="Назад" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" onAction="#handleBackButton"/>
+                    </HBox>
+
+                    <!--Секция фильтров -->
+
+                    <GridPane alignment="CENTER">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                            <ColumnConstraints hgrow="ALWAYS" maxWidth="150.0" minWidth="150.0" prefWidth="110.0"/>
+                        </columnConstraints>
+                        <Label  text="Фильтры" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+                        <TextField fx:id="idFilter" promptText="Фильтр по ID" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <TextField fx:id="clientFilter" promptText="Фильтр по ID клиента" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <TextField fx:id="projectFilter" promptText="Фильтр ID проекта" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <ComboBox fx:id="statusFilter" promptText="По статусу" maxWidth="150.0" minWidth="150.0" prefWidth="110.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList" >
+                                    <String fx:value="ALL"/>
+                                    <String fx:value="IN_PROCESS"/>
+                                    <String fx:value="DELAYED"/>
+                                    <String fx:value="APPROVED"/>
+                                    <String fx:value="CANCELED"/>
+                                </FXCollections>
+                            </items>
+                        </ComboBox>
+
+                    </GridPane>
+                </VBox>
             </GridPane>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <TextField fx:id="idFilter" promptText="Фильтр по ID"/>
-                <TextField fx:id="clientFilter" promptText="Фильтр по ID клиента"/>
-                <TextField fx:id="projectFilter" promptText="Фильтр ID проекта"/>
-                <ComboBox fx:id="statusFilter">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="ALL"/>
-                            <String fx:value="IN_PROCESS"/>
-                            <String fx:value="DELAYED"/>
-                            <String fx:value="APPROVED"/>
-                            <String fx:value="CANCELED"/>
-                        </FXCollections>
-                    </items>
-                </ComboBox>
-            </HBox>
+                    <TableView fx:id="orderTable" onMouseClicked="#handleTableClick">
+                        <columns>
+                            <TableColumn text="ID" maxWidth="80.0" minWidth="80.0" fx:id="id"/>
+                            <TableColumn text="ID клиента" maxWidth="150.0" minWidth="150.0" fx:id="client_id"/>
+                            <TableColumn text="ID проекта" maxWidth="150.0" minWidth="150.0" fx:id="project_id"/>
+                            <TableColumn text="Дата заказа" maxWidth="150.0" minWidth="150.0" fx:id="order_date"/>
+                            <TableColumn text="Дата исполнения" maxWidth="200.0" minWidth="200.0" fx:id="completion_date"/>
+                            <TableColumn text="Статус заказа" maxWidth="200.0" minWidth="200.0" fx:id="order_status"/>
+                            <TableColumn text="Описание заказа" maxWidth="200.0" minWidth="200.0" fx:id="order_description"/>
+                        </columns>
+                    </TableView>
 
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <Button fx:id="editOrderButton" mnemonicParsing="false" text="Изменить"
-                        onAction="#handleEditOrder"/>
-                <Button fx:id="updateOrderButton" mnemonicParsing="false" text="Обновить"
-                        onAction="#handleUpdateOrders"/>
-                <Button fx:id="cleanOrderButton" mnemonicParsing="false" text="Очистить"
-                        onAction="#handleCleanButton"/>
-                <Button fx:id="handleBackButton" mnemonicParsing="false" text="Назад"
-                        onAction="#handleBackButton"/>
-            </HBox>
-
-            <TableView fx:id="orderTable" onMouseClicked="#handleTableClick">
-                <columns>
-                    <TableColumn text="ID" fx:id="id"/>
-                    <TableColumn text="ID клиента" fx:id="client_id"/>
-                    <TableColumn text="ID проекта" fx:id="project_id"/>
-                    <TableColumn text="Дата заказа" fx:id="order_date"/>
-                    <TableColumn text="Дата исполнения" fx:id="completion_date"/>
-                    <TableColumn text="Статус заказа" fx:id="order_status"/>
-                    <TableColumn text="Описание заказа" fx:id="order_description"/>
-                </columns>
-            </TableView>
-
-        </VBox>
+        </HBox>
     </StackPane>
 </StackPane>

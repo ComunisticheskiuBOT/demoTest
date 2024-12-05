@@ -32,6 +32,20 @@ public class EmployeeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/employee-api/v1/employees/passport/{inn}")
+    public ResponseEntity<Employee> getEmployeeByInn(@PathVariable Long inn) {
+        return employeeService.findEmployeeByInn(inn)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/employee-api/v1/employees/passport/{snils}")
+    public ResponseEntity<Employee> getEmployeeBySnils(@PathVariable Long snils) {
+        return employeeService.findEmployeeBySnils(snils)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/employee-api/v1/employees/phone/{phoneNumber}")
     public ResponseEntity<Employee> getEmployeeByPhoneNumber(@PathVariable String phoneNumber) {
         return employeeService.findEmployeeByPhoneNumber(phoneNumber)

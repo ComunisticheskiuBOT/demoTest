@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.demotest.entities.Measurement;
 import org.example.demotest.entities.Product;
 
 import java.io.Serial;
@@ -18,12 +19,14 @@ import java.util.Date;
 public class ServiceRequestStorage implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
     private Long storageId;
 
     @JsonProperty("productId")
     private Product product;
-
+    @JsonProperty("measurementId")
+    private Measurement measurement;
+    private String storageName;
+    private String productName;
     private Integer quantity;
     private Date arrivalDate;
 }

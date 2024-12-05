@@ -12,6 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.example.demotest.dto.ServiceRequestOrder;
 import org.example.demotest.entities.*;
+import org.example.demotest.entities.enums.OrderStatus;
+import org.example.demotest.entities.enums.Role;
 import org.example.demotest.managers.LoginManager;
 import org.example.demotest.services.*;
 import org.springframework.context.ApplicationContext;
@@ -111,9 +113,9 @@ public class OrderAppController {
         order_status.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
         order_description.setCellValueFactory(new PropertyValueFactory<>("orderDescription"));
 
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
-            statusComboBoxField.getItems().setAll(org.example.demotest.entities.OrderStatus.values());
-            statusComboBoxField.getItems().setAll(org.example.demotest.entities.OrderStatus.values());
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
+            statusComboBoxField.getItems().setAll(OrderStatus.values());
+            statusComboBoxField.getItems().setAll(OrderStatus.values());
             clientIdField.setTextFormatter(createDateFilter());
             projectIdField.setTextFormatter(createDateFilter());
             dateOfOrderField.setTextFormatter(createDateFilter());
@@ -131,7 +133,7 @@ public class OrderAppController {
 
     @FXML
     private void handleCleanButton(){
-        if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+        if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
             clientIdField.setText("");
             projectIdField.setText("");
             dateOfOrderField.setText("");
@@ -159,7 +161,7 @@ public class OrderAppController {
     private void handleAddOrder(ActionEvent event) {
 
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN) {
+            if (userRole == Role.ADMIN) {
 
                 Long clientIdValue = Long.valueOf(clientIdField.getText());
                 Client client = orderService.getClientById(clientIdValue);
@@ -207,7 +209,7 @@ public class OrderAppController {
         selectedOrder = orderTable.getSelectionModel().getSelectedItem();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         try {
-            if (userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if (userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 if (selectedOrder != null) {
                     clientIdField.setText(String.valueOf(selectedOrder.getClient().getClientId()));
                     projectIdField.setText(String.valueOf(selectedOrder.getProject().getProjectId()));
@@ -230,7 +232,7 @@ public class OrderAppController {
         }
 
         try {
-            if(userRole == org.example.demotest.entities.Role.ADMIN || userRole == org.example.demotest.entities.Role.MODERATOR) {
+            if(userRole == Role.ADMIN || userRole == Role.MODERATOR) {
                 ServiceRequestOrder updatedOrder = new ServiceRequestOrder();
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date parsedDateOfExecutionField = sdf.parse(dateOfExecutionField.getText());
@@ -294,7 +296,7 @@ public class OrderAppController {
 
     @FXML
     private void handleDeleteOrder() {
-        if (userRole == org.example.demotest.entities.Role.ADMIN) {
+        if (userRole == Role.ADMIN) {
 
             Long idText = Long.valueOf(deleteIdField.getText());
 

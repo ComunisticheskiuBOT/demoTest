@@ -75,7 +75,7 @@ public class LoginManager {
             controller.initProductsWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
             controller.initQualitiesWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
             controller.initStoragesWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
-
+            //controller.initMeasurementsWindow(new MainViewManager(stage, applicationContext),userPassport, applicationContext);
         } catch (IOException ex) {
             Logger.getLogger(LoginManager.class.getName()).log(Level.SEVERE, null, ex);
         }
